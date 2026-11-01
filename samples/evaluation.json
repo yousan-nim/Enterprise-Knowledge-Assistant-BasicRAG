@@ -1,0 +1,5 @@
+[
+  {"question": "ไปพบลูกค้าค่ารถ 650 บาท เบิกได้เท่าไร?", "expected": "สูงสุด 500 บาทต่อวัน ต้องมีใบเสร็จ", "source_section": "Travel expenses"},
+  {"question": "How many remote-work days are allowed each week?", "expected": "Two days per week", "source_section": "Working hours"},
+  {"question": "ลาพักร้อนได้กี่วัน?", "expected": "Not specified; abstain", "source_section": null}
+]
