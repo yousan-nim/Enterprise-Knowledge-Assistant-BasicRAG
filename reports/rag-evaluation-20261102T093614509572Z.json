@@ -1,0 +1,401 @@
+{
+  "created_at": "2026-11-02T09:36:14.507412+00:00",
+  "dataset_version": "1.0",
+  "config": {
+    "chunk_size": 250,
+    "overlap": 50,
+    "top_k": 1,
+    "chunk_count": 2,
+    "embedding_dimensions": 768,
+    "chat_model": "qwen2.5:3b",
+    "embedding_model": "embeddinggemma"
+  },
+  "fingerprints": {
+    "samples/evaluation.json": "3b2566241e452a37aa5958950adde9a2a215c7f2c13a18927dc0c8d52e7ff3da",
+    "samples/company-handbook.md": "db760eaf7739fd9daeaf83f95d480a85675d7f0ecca47722f5a4271477035626",
+    "backend/app/services/generation.py": "3502b37054d629c176ddf6ab398c054e5594313771bb5e4d763dd663434a37a6",
+    "backend/app/schemas.py": "18ae15b4ca619bcfc908efac71ffe71efed08c9ae2d58b66e46fc0d82fd02c81",
+    "backend/app/services/ollama.py": "20d37bfcf42461fcd3cdacb3a614d9233b9cbdd614d8d13bc3fb4dda650b75be"
+  },
+  "installed_models": [
+    {
+      "name": "embeddinggemma:latest",
+      "digest": "85462619ee721b466c5927d109d4cb765861907d5417b9109caebc4e614679f1"
+    },
+    {
+      "name": "qwen2.5:3b",
+      "digest": "357c53fb659c5076de1d65ccb0b397446227b71a42be9d1603d46168015c9e4b"
+    },
+    {
+      "name": "gemma3:1b",
+      "digest": "8648f39daa8fbf5b18c7b4e6a8fb4990c692751d49917417b8842ca5758e7ffc"
+    }
+  ],
+  "results": [
+    {
+      "id": "travel-th",
+      "question": "ค่าเดินทางเบิกได้สูงสุดเท่าไร?",
+      "language": "th",
+      "expected_found": true,
+      "expected_answer": "500 บาทต่อวัน ตามค่าใช้จ่ายจริง",
+      "evidence_quotes": [
+        "up to THB 500 per day"
+      ],
+      "retrieved": [
+        {
+          "id": "chunk-2",
+          "text": "ses\nClient-visit travel expenses are reimbursed at actual cost, up to THB 500 per day. Receipts are required.\n\n## IT support\nReport laptop issues to the IT help desk. This handbook does not specify a response time.",
+          "source": "company-handbook.md",
+          "score": 0.42788980881821254
+        }
+      ],
+      "output": {
+        "answer": "ค่าเดินทางเบิกได้สูงสุดเท่าไหร่คือ THB 500 ต่อวัน",
+        "citation_ids": [
+          "chunk-2"
+        ],
+        "found": true
+      },
+      "error": null,
+      "schema_and_ids_valid": true,
+      "found_matches_expected": true,
+      "exact_quote_coverage": 1.0,
+      "manual_review": {
+        "answer_correct": null,
+        "conditions_complete": null,
+        "citations_support_claims": null,
+        "language_correct": null,
+        "notes": ""
+      },
+      "latency_seconds": 10.581
+    },
+    {
+      "id": "travel-en",
+      "question": "What is the maximum reimbursement for client-visit travel?",
+      "language": "en",
+      "expected_found": true,
+      "expected_answer": "Actual cost, capped at THB 500 per day",
+      "evidence_quotes": [
+        "up to THB 500 per day"
+      ],
+      "retrieved": [
+        {
+          "id": "chunk-2",
+          "text": "ses\nClient-visit travel expenses are reimbursed at actual cost, up to THB 500 per day. Receipts are required.\n\n## IT support\nReport laptop issues to the IT help desk. This handbook does not specify a response time.",
+          "source": "company-handbook.md",
+          "score": 0.5748864909873578
+        }
+      ],
+      "output": {
+        "answer": "The maximum reimbursement for client-visit travel expenses is THB 500 per day.",
+        "citation_ids": [
+          "chunk-2"
+        ],
+        "found": true
+      },
+      "error": null,
+      "schema_and_ids_valid": true,
+      "found_matches_expected": true,
+      "exact_quote_coverage": 1.0,
+      "manual_review": {
+        "answer_correct": null,
+        "conditions_complete": null,
+        "citations_support_claims": null,
+        "language_correct": null,
+        "notes": ""
+      },
+      "latency_seconds": 6.259
+    },
+    {
+      "id": "receipts-th",
+      "question": "เบิกค่าเดินทางต้องแนบอะไร?",
+      "language": "th",
+      "expected_found": true,
+      "expected_answer": "ต้องมีใบเสร็จ",
+      "evidence_quotes": [
+        "Receipts are required."
+      ],
+      "retrieved": [
+        {
+          "id": "chunk-2",
+          "text": "ses\nClient-visit travel expenses are reimbursed at actual cost, up to THB 500 per day. Receipts are required.\n\n## IT support\nReport laptop issues to the IT help desk. This handbook does not specify a response time.",
+          "source": "company-handbook.md",
+          "score": 0.4070537005298013
+        }
+      ],
+      "output": {
+        "answer": "เบิกค่าเดินทางต้องแนบใบรับรองค่าใช้จ่าย",
+        "citation_ids": [
+          "chunk-2"
+        ],
+        "found": true
+      },
+      "error": null,
+      "schema_and_ids_valid": true,
+      "found_matches_expected": true,
+      "exact_quote_coverage": 1.0,
+      "manual_review": {
+        "answer_correct": null,
+        "conditions_complete": null,
+        "citations_support_claims": null,
+        "language_correct": null,
+        "notes": ""
+      },
+      "latency_seconds": 9.16
+    },
+    {
+      "id": "receipts-en",
+      "question": "Are receipts required for travel reimbursement?",
+      "language": "en",
+      "expected_found": true,
+      "expected_answer": "Yes, receipts are required",
+      "evidence_quotes": [
+        "Receipts are required."
+      ],
+      "retrieved": [
+        {
+          "id": "chunk-2",
+          "text": "ses\nClient-visit travel expenses are reimbursed at actual cost, up to THB 500 per day. Receipts are required.\n\n## IT support\nReport laptop issues to the IT help desk. This handbook does not specify a response time.",
+          "source": "company-handbook.md",
+          "score": 0.5376180779580046
+        }
+      ],
+      "output": {
+        "answer": "Source: company-handbook.md\nses\nClient-visit travel expenses are reimbursed at actual cost, up to THB 500 per day. Receipts are required.",
+        "citation_ids": [
+          "chunk-2"
+        ],
+        "found": true
+      },
+      "error": null,
+      "schema_and_ids_valid": true,
+      "found_matches_expected": true,
+      "exact_quote_coverage": 1.0,
+      "manual_review": {
+        "answer_correct": null,
+        "conditions_complete": null,
+        "citations_support_claims": null,
+        "language_correct": null,
+        "notes": ""
+      },
+      "latency_seconds": 9.073
+    },
+    {
+      "id": "remote-th",
+      "question": "ทำงานจากบ้านได้สัปดาห์ละกี่วัน?",
+      "language": "th",
+      "expected_found": true,
+      "expected_answer": "สองวันต่อสัปดาห์",
+      "evidence_quotes": [
+        "Remote work is allowed two days per week."
+      ],
+      "retrieved": [
+        {
+          "id": "chunk-1",
+          "text": "# Demo company handbook\n\nข้อมูลสมมติสำหรับฝึกเท่านั้น / Fictional training data.\n\n## Working hours\nEmployees work Monday–Friday, 09:00–18:00.\nRemote work is allowed two days per week.\n\n## Travel expenses\nClient-visit travel expenses are reimbursed at",
+          "source": "company-handbook.md",
+          "score": 0.3737365847004158
+        }
+      ],
+      "output": {
+        "answer": "Employees work Monday–Friday, 09:00–18:00. Remote work is allowed two days per week.",
+        "citation_ids": [
+          "chunk-1"
+        ],
+        "found": true
+      },
+      "error": null,
+      "schema_and_ids_valid": true,
+      "found_matches_expected": true,
+      "exact_quote_coverage": 1.0,
+      "manual_review": {
+        "answer_correct": null,
+        "conditions_complete": null,
+        "citations_support_claims": null,
+        "language_correct": null,
+        "notes": ""
+      },
+      "latency_seconds": 7.028
+    },
+    {
+      "id": "remote-en",
+      "question": "How many remote-work days are allowed each week?",
+      "language": "en",
+      "expected_found": true,
+      "expected_answer": "Two days per week",
+      "evidence_quotes": [
+        "Remote work is allowed two days per week."
+      ],
+      "retrieved": [
+        {
+          "id": "chunk-1",
+          "text": "# Demo company handbook\n\nข้อมูลสมมติสำหรับฝึกเท่านั้น / Fictional training data.\n\n## Working hours\nEmployees work Monday–Friday, 09:00–18:00.\nRemote work is allowed two days per week.\n\n## Travel expenses\nClient-visit travel expenses are reimbursed at",
+          "source": "company-handbook.md",
+          "score": 0.4136604409550699
+        }
+      ],
+      "output": {
+        "answer": "Remote work is allowed two days per week.",
+        "citation_ids": [
+          "chunk-1"
+        ],
+        "found": true
+      },
+      "error": null,
+      "schema_and_ids_valid": true,
+      "found_matches_expected": true,
+      "exact_quote_coverage": 1.0,
+      "manual_review": {
+        "answer_correct": null,
+        "conditions_complete": null,
+        "citations_support_claims": null,
+        "language_correct": null,
+        "notes": ""
+      },
+      "latency_seconds": 3.475
+    },
+    {
+      "id": "hours-th",
+      "question": "เวลาทำงานคือกี่โมงและวันไหนบ้าง?",
+      "language": "th",
+      "expected_found": true,
+      "expected_answer": "จันทร์ถึงศุกร์ 09:00–18:00",
+      "evidence_quotes": [
+        "Employees work Monday–Friday, 09:00–18:00."
+      ],
+      "retrieved": [
+        {
+          "id": "chunk-1",
+          "text": "# Demo company handbook\n\nข้อมูลสมมติสำหรับฝึกเท่านั้น / Fictional training data.\n\n## Working hours\nEmployees work Monday–Friday, 09:00–18:00.\nRemote work is allowed two days per week.\n\n## Travel expenses\nClient-visit travel expenses are reimbursed at",
+          "source": "company-handbook.md",
+          "score": 0.5090676796859889
+        }
+      ],
+      "output": {
+        "answer": "Employees work Monday–Friday, 09:00–18:00.",
+        "citation_ids": [
+          "chunk-1"
+        ],
+        "found": true
+      },
+      "error": null,
+      "schema_and_ids_valid": true,
+      "found_matches_expected": true,
+      "exact_quote_coverage": 1.0,
+      "manual_review": {
+        "answer_correct": null,
+        "conditions_complete": null,
+        "citations_support_claims": null,
+        "language_correct": null,
+        "notes": ""
+      },
+      "latency_seconds": 5.823
+    },
+    {
+      "id": "leave-th",
+      "question": "ลาพักร้อนได้กี่วัน?",
+      "language": "th",
+      "expected_found": false,
+      "expected_answer": "ไม่ระบุวันลา อย่านำวันทำงานจากบ้านมาตอบ",
+      "evidence_quotes": [],
+      "retrieved": [
+        {
+          "id": "chunk-2",
+          "text": "ses\nClient-visit travel expenses are reimbursed at actual cost, up to THB 500 per day. Receipts are required.\n\n## IT support\nReport laptop issues to the IT help desk. This handbook does not specify a response time.",
+          "source": "company-handbook.md",
+          "score": 0.3141881347848158
+        }
+      ],
+      "output": {
+        "answer": "ไม่พบข้อมูลในเอกสาร",
+        "citation_ids": [],
+        "found": false
+      },
+      "error": null,
+      "schema_and_ids_valid": true,
+      "found_matches_expected": true,
+      "exact_quote_coverage": null,
+      "manual_review": {
+        "answer_correct": null,
+        "conditions_complete": null,
+        "citations_support_claims": null,
+        "language_correct": null,
+        "notes": ""
+      },
+      "latency_seconds": 3.106
+    },
+    {
+      "id": "leave-en",
+      "question": "How many annual leave days are employees entitled to?",
+      "language": "en",
+      "expected_found": false,
+      "expected_answer": "Not specified; remote-work days are not annual leave",
+      "evidence_quotes": [],
+      "retrieved": [
+        {
+          "id": "chunk-1",
+          "text": "# Demo company handbook\n\nข้อมูลสมมติสำหรับฝึกเท่านั้น / Fictional training data.\n\n## Working hours\nEmployees work Monday–Friday, 09:00–18:00.\nRemote work is allowed two days per week.\n\n## Travel expenses\nClient-visit travel expenses are reimbursed at",
+          "source": "company-handbook.md",
+          "score": 0.33069524460880506
+        }
+      ],
+      "output": {
+        "answer": "ไม่พบข้อมูลในเอกสาร",
+        "citation_ids": [],
+        "found": false
+      },
+      "error": null,
+      "schema_and_ids_valid": true,
+      "found_matches_expected": true,
+      "exact_quote_coverage": null,
+      "manual_review": {
+        "answer_correct": null,
+        "conditions_complete": null,
+        "citations_support_claims": null,
+        "language_correct": null,
+        "notes": ""
+      },
+      "latency_seconds": 2.655
+    },
+    {
+      "id": "support-en",
+      "question": "How quickly will IT resolve a laptop issue?",
+      "language": "en",
+      "expected_found": false,
+      "expected_answer": "Response/resolution time is not specified",
+      "evidence_quotes": [],
+      "retrieved": [
+        {
+          "id": "chunk-2",
+          "text": "ses\nClient-visit travel expenses are reimbursed at actual cost, up to THB 500 per day. Receipts are required.\n\n## IT support\nReport laptop issues to the IT help desk. This handbook does not specify a response time.",
+          "source": "company-handbook.md",
+          "score": 0.4809675449354404
+        }
+      ],
+      "output": {
+        "answer": "ไม่พบข้อมูลในเอกสาร",
+        "citation_ids": [],
+        "found": false
+      },
+      "error": null,
+      "schema_and_ids_valid": true,
+      "found_matches_expected": true,
+      "exact_quote_coverage": null,
+      "manual_review": {
+        "answer_correct": null,
+        "conditions_complete": null,
+        "citations_support_claims": null,
+        "language_correct": null,
+        "notes": ""
+      },
+      "latency_seconds": 2.401
+    }
+  ],
+  "summary": {
+    "cases": 10,
+    "errors": 0,
+    "schema_valid": 10,
+    "found_matches": 10,
+    "human_review_required": true
+  }
+}

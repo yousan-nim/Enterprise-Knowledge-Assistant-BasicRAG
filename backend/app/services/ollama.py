@@ -1,33 +1,6 @@
 import httpx
 import math
 
-async def generate_answer(question: str) -> str:
-    async with httpx.AsyncClient(timeout=120) as client:
-        response = await client.post(
-            "http://127.0.0.1:11434/api/chat",
-            json={
-                "model": "qwen2.5:3b",
-                "stream": False,
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": question,
-                    }
-                ],
-            },
-        )
-
-        response.raise_for_status()
-        data = response.json()
-
-    answer = data["message"]["content"]
-
-    if not isinstance(answer, str) or not answer.strip():
-        raise ValueError("The model returned an invalid or empty answer.")
-
-    return answer.strip()
-
-
 async def embed_texts(texts: list[str]) -> list[list[float]]:
     if not texts:
         raise ValueError("Please provide at least one text.")
@@ -78,3 +51,39 @@ async def embed_texts(texts: list[str]) -> list[list[float]]:
             raise ValueError("Embedding must not be a zero vector.")
 
     return vectors
+
+
+async def generate_answer(
+    question: str,
+    output_schema: dict | None = None,
+) -> str:
+    payload = {
+        "model": "qwen2.5:3b",
+        "stream": False,
+        "messages": [
+            {
+                "role": "user",
+                "content": question,
+            }
+        ],
+    }
+
+    if output_schema is not None:
+        payload["format"] = output_schema
+        payload["options"] = {"temperature": 0}
+
+    async with httpx.AsyncClient(timeout=120) as client:
+        response = await client.post(
+            "http://127.0.0.1:11434/api/chat",
+            json=payload,
+        )
+
+        response.raise_for_status()
+        data = response.json()
+
+    answer = data["message"]["content"]
+
+    if not isinstance(answer, str) or not answer.strip():
+        raise ValueError("The model returned an invalid or empty answer.")
+
+    return answer.strip()

@@ -1,5 +1,99 @@
-[
-  {"question": "ไปพบลูกค้าค่ารถ 650 บาท เบิกได้เท่าไร?", "expected": "สูงสุด 500 บาทต่อวัน ต้องมีใบเสร็จ", "source_section": "Travel expenses"},
-  {"question": "How many remote-work days are allowed each week?", "expected": "Two days per week", "source_section": "Working hours"},
-  {"question": "ลาพักร้อนได้กี่วัน?", "expected": "Not specified; abstain", "source_section": null}
-]
+{
+  "version": "1.0",
+  "cases": [
+    {
+      "id": "travel-th",
+      "question": "ค่าเดินทางเบิกได้สูงสุดเท่าไร?",
+      "language": "th",
+      "expected_found": true,
+      "expected_answer": "500 บาทต่อวัน ตามค่าใช้จ่ายจริง",
+      "evidence_quotes": [
+        "up to THB 500 per day"
+      ]
+    },
+    {
+      "id": "travel-en",
+      "question": "What is the maximum reimbursement for client-visit travel?",
+      "language": "en",
+      "expected_found": true,
+      "expected_answer": "Actual cost, capped at THB 500 per day",
+      "evidence_quotes": [
+        "up to THB 500 per day"
+      ]
+    },
+    {
+      "id": "receipts-th",
+      "question": "เบิกค่าเดินทางต้องแนบอะไร?",
+      "language": "th",
+      "expected_found": true,
+      "expected_answer": "ต้องมีใบเสร็จ",
+      "evidence_quotes": [
+        "Receipts are required."
+      ]
+    },
+    {
+      "id": "receipts-en",
+      "question": "Are receipts required for travel reimbursement?",
+      "language": "en",
+      "expected_found": true,
+      "expected_answer": "Yes, receipts are required",
+      "evidence_quotes": [
+        "Receipts are required."
+      ]
+    },
+    {
+      "id": "remote-th",
+      "question": "ทำงานจากบ้านได้สัปดาห์ละกี่วัน?",
+      "language": "th",
+      "expected_found": true,
+      "expected_answer": "สองวันต่อสัปดาห์",
+      "evidence_quotes": [
+        "Remote work is allowed two days per week."
+      ]
+    },
+    {
+      "id": "remote-en",
+      "question": "How many remote-work days are allowed each week?",
+      "language": "en",
+      "expected_found": true,
+      "expected_answer": "Two days per week",
+      "evidence_quotes": [
+        "Remote work is allowed two days per week."
+      ]
+    },
+    {
+      "id": "hours-th",
+      "question": "เวลาทำงานคือกี่โมงและวันไหนบ้าง?",
+      "language": "th",
+      "expected_found": true,
+      "expected_answer": "จันทร์ถึงศุกร์ 09:00–18:00",
+      "evidence_quotes": [
+        "Employees work Monday–Friday, 09:00–18:00."
+      ]
+    },
+    {
+      "id": "leave-th",
+      "question": "ลาพักร้อนได้กี่วัน?",
+      "language": "th",
+      "expected_found": false,
+      "expected_answer": "ไม่ระบุวันลา อย่านำวันทำงานจากบ้านมาตอบ",
+      "evidence_quotes": []
+    },
+    {
+      "id": "leave-en",
+      "question": "How many annual leave days are employees entitled to?",
+      "language": "en",
+      "expected_found": false,
+      "expected_answer": "Not specified; remote-work days are not annual leave",
+      "evidence_quotes": []
+    },
+    {
+      "id": "support-en",
+      "question": "How quickly will IT resolve a laptop issue?",
+      "language": "en",
+      "expected_found": false,
+      "expected_answer": "Response/resolution time is not specified",
+      "evidence_quotes": []
+    }
+  ]
+}
