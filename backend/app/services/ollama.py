@@ -1,6 +1,8 @@
 import httpx
 import math
 
+from app.config import EMBED_MODEL
+
 async def embed_texts(texts: list[str]) -> list[list[float]]:
     if not texts:
         raise ValueError("Please provide at least one text.")
@@ -12,7 +14,7 @@ async def embed_texts(texts: list[str]) -> list[list[float]]:
         response = await client.post(
             "http://127.0.0.1:11434/api/embed",
             json={
-                "model": "embeddinggemma",
+                "model": EMBED_MODEL,
                 "input": texts,
                 "truncate": False,
             },

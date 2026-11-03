@@ -1,1 +1,10 @@
-"""บท 05: เก็บ document/chunk/vector ในหน่วยความจำ ข้อมูลหายเมื่อ restart. Implementation intentionally left to the learner."""
+
+
+_chunks: list[dict] = []
+
+def replace_chunks(chunks: list[dict]) -> None: 
+    global _chunks 
+    _chunks = list(chunks)
+    
+def get_chunks() -> list[dict]: 
+    return list(_chunks)
