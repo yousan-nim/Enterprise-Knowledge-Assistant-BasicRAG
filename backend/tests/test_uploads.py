@@ -3,7 +3,8 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch, AsyncMock
 import httpx
-from app.main import app, MAX_UPLOAD_BYTES
+from app.main import app
+from app.routes.documents import MAX_UPLOAD_BYTES
 from app.storage.sqlite import get_chunks, replace_chunks
 
 class UploadTests(unittest.IsolatedAsyncioTestCase):
@@ -23,7 +24,7 @@ class UploadTests(unittest.IsolatedAsyncioTestCase):
     async def test_indexes_uploaded_text_not_sample(self):
         async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app),base_url='http://test') as client:
             with patch('app.services.ingestion.embed_texts',new_callable=AsyncMock,return_value=[[1.,0.]]) as embed:
-                r=await client.post('/documents',files={'file':('custom.md','ข้อมูลใหม่สำหรับทดสอบ'.encode(),'text/markdown')})
+                r=await client.post('/api/v1/documents',files={'file':('custom.md','ข้อมูลใหม่สำหรับทดสอบ'.encode(),'text/markdown')})
         self.assertEqual(r.status_code,201)
         embed.assert_awaited_once_with(['ข้อมูลใหม่สำหรับทดสอบ'])
         self.assertEqual(get_chunks()[0]['source'],'custom.md')
@@ -34,7 +35,7 @@ class UploadTests(unittest.IsolatedAsyncioTestCase):
             with patch('app.services.ingestion.embed_texts',new_callable=AsyncMock) as embed:
                 for name,data,status in cases:
                     with self.subTest(name=name):
-                        r=await client.post('/documents',files={'file':(name,data)})
+                        r=await client.post('/api/v1/documents',files={'file':(name,data)})
                         self.assertEqual(r.status_code,status)
                         self.assertEqual(get_chunks(),self.old)
                 embed.assert_not_awaited()
@@ -42,7 +43,7 @@ class UploadTests(unittest.IsolatedAsyncioTestCase):
     async def test_normalizes_name_and_accepts_utf8_bom(self):
         async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app),base_url='http://test') as client:
             with patch('app.services.ingestion.embed_texts',new_callable=AsyncMock,return_value=[[1.,0.]]) as embed:
-                r=await client.post('/documents',files={'file':('../name.MD',b'\xef\xbb\xbfhello')})
+                r=await client.post('/api/v1/documents',files={'file':('../name.MD',b'\xef\xbb\xbfhello')})
         self.assertEqual(r.status_code,201)
         self.assertEqual(r.json()['source'],'name.MD')
         embed.assert_awaited_once_with(['hello'])

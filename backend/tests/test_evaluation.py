@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, AsyncMock
 from experiments.evaluate_rag import evidence_coverage, evaluate_case
-from app.schemas import GroundedAnswer
+from app.schemas.schemas import GroundedAnswer
 
 class EvaluationTests(unittest.IsolatedAsyncioTestCase):
     def test_quote_coverage_is_not_answer_accuracy(self):

@@ -12,9 +12,9 @@ Next.js UI + Python/FastAPI backend + local Ollama. เรียนจาก Pyt
 - แยก retrieval quality ออกจาก answer quality; similarity ไม่ใช่ confidence
 
 ## Intended API
-- GET /health: API และโมเดลพร้อมหรือไม่
-- POST /documents: รับไฟล์ → document ID / จำนวน chunks
-- POST /questions: รับ question / top_k → answer / sources / model
+- GET /api/v1/health: API และโมเดลพร้อมหรือไม่
+- POST /api/v1/documents: รับไฟล์ → document ID / จำนวน chunks
+- POST /api/v1/questions: รับ question / top_k → answer / sources / model
 รายละเอียด validation และ schemas ให้ออกแบบในบทที่เกี่ยวข้อง
 
 ## Data boundaries

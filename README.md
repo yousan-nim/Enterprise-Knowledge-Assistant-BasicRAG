@@ -19,10 +19,14 @@ Learning scaffold → portfolio project. โค้ดการทำงานจ
 backend/
   app/
     main.py                 # สร้าง FastAPI และเชื่อม routes
-    config.py               # อ่าน environment settings
-    schemas.py              # request/response models
-    api/
-      health.py             # readiness ของ API / Ollama
+    config/config.py        # อ่าน environment settings
+    schemas/schemas.py      # structured model answers
+    schemas/http.py         # API request/response models
+    api_docs/api_docs.py    # Swagger descriptions and examples
+    routes/
+      router.py             # รวม endpoints ใต้ /api/v1
+      health.py             # API liveness
+      chat.py               # ถามโมเดลโดยไม่ค้นเอกสาร
       documents.py          # รับเอกสารและเรียก ingestion
       questions.py          # รับคำถามและเรียก RAG
     services/
@@ -52,3 +56,13 @@ reports/                    # ผลวัดสำหรับ portfolio
 
 ## Portfolio evidence
 เก็บ architecture, retrieval examples, failure cases, evaluation report และ demo จากระบบที่ทำจริง ไม่ใส่ผล benchmark ที่ยังไม่ได้วัด
+
+## API routes
+
+- `GET /api/v1/health`
+- `POST /api/v1/chat`
+- `POST /api/v1/documents` (multipart file upload)
+- `POST /api/v1/questions`
+
+Swagger stays at `/docs`; OpenAPI stays at `/openapi.json`.
+Unversioned endpoint paths have been replaced. Update external clients to `/api/v1`.

@@ -1,18 +1,18 @@
-from pydantic import BaseModel, ConfigDict, Field, model_validator 
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 
-class GroundedAnswer(BaseModel): 
+class GroundedAnswer(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
         strict=True,
         str_strip_whitespace=True,
     )
-    
-    answer: str = Field(min_length=1, description="Answer the question using only the excerpts, in the question language.") 
-    citation_ids: list[str] = Field(description="Exact IDs of excerpts supporting the answer; empty when no answer is found.") 
-    found: bool = Field(description="True when the excerpts contain the information requested by the question.") 
-    
+
+    answer: str = Field(min_length=1, description="Answer the question using only the excerpts, in the question language.")
+    citation_ids: list[str] = Field(description="Exact IDs of excerpts supporting the answer; empty when no answer is found.")
+    found: bool = Field(description="True when the excerpts contain the information requested by the question.")
+
     @model_validator(mode="after")
     def check_consistency(self):
         if self.found:

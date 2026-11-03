@@ -84,7 +84,7 @@ async def main():
                          "chat_model": "qwen2.5:3b", "embedding_model": "embeddinggemma"},
               "fingerprints": {str(p.relative_to(ROOT)): fingerprint(p) for p in
                                [dataset_path, handbook, ROOT / "backend/app/services/generation.py",
-                                ROOT / "backend/app/schemas.py", ROOT / "backend/app/services/ollama.py"]},
+                                ROOT / "backend/app/schemas/schemas.py", ROOT / "backend/app/services/ollama.py"]},
               "installed_models": [{"name": m["name"], "digest": m.get("digest")} for m in installed],
               "results": []}
     output = args.output or ROOT / "reports" / (datetime.now(timezone.utc).strftime("rag-evaluation-%Y%m%dT%H%M%S%fZ.json"))

@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, AsyncMock
 from pydantic import ValidationError
-from app.schemas import GroundedAnswer
+from app.schemas.schemas import GroundedAnswer
 from app.services.generation import answer_with_sources
 
 class StructuredTests(unittest.IsolatedAsyncioTestCase):

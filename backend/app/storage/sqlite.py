@@ -1,7 +1,7 @@
 import json
 import sqlite3
 
-from app.config import DATA_DIR, EMBED_MODEL
+from app.config.config import DATA_DIR, EMBED_MODEL
 
 
 def connect() -> sqlite3.Connection:

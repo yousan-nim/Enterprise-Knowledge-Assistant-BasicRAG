@@ -1,7 +1,7 @@
 import json
 from pydantic import ValidationError
 from app.services.ollama import generate_answer
-from app.schemas import AnswerDraft, GroundedAnswer 
+from app.schemas.schemas import AnswerDraft, GroundedAnswer
 
 def build_prompt(question: str, context: str) -> str:
     return f"""
@@ -24,24 +24,24 @@ def build_prompt(question: str, context: str) -> str:
             Question:
             {question}
             """.strip()
-            
-async def answer_from_document(question: str, context: str) -> str: 
+
+async def answer_from_document(question: str, context: str) -> str:
     prompt = build_prompt(question, context)
     return await generate_answer(prompt)
 
-def validate_citations(answer: str, allowed_ids: set[str]) -> None: 
-    import re 
-    
+def validate_citations(answer: str, allowed_ids: set[str]) -> None:
+    import re
+
     cited_ids = set(re.findall(r'\[(chunk-\d+)\]', answer))
-    
+
     if answer.strip() == "ไม่พบข้อมูลในเอกสาร":
         return
-    
-    if not cited_ids: 
+
+    if not cited_ids:
         raise ValueError("No citations found in the answer.")
-    
+
     unknown_ids = cited_ids - allowed_ids
-    
+
     if unknown_ids:
         raise ValueError(f"Unknown citations found in the answer: {unknown_ids}")
 
@@ -58,7 +58,7 @@ async def answer_with_sources(
             citation_ids=[],
             found=False,
         )
-        
+
     context = "\n\n".join(
         f"[{result['id']}] Source: {result['source']}\n"
         f"{result['text']}"

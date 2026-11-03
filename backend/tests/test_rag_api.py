@@ -35,8 +35,8 @@ class RagApiTests(unittest.IsolatedAsyncioTestCase):
             return httpx.Response(200, json={'message': {'content': json.dumps({'answer': '500 บาทต่อวัน', 'citation_ids': ['chunk-2']})}})
         async with OriginalClient(transport=httpx.ASGITransport(app=app), base_url='http://test') as client:
             with patch('app.services.ollama.httpx.AsyncClient', side_effect=lambda **kw: OriginalClient(transport=httpx.MockTransport(handler), **kw)):
-                prepared = await client.post('/documents', files={'file': ('handbook.md', (Path(__file__).resolve().parents[2] / 'samples/company-handbook.md').read_bytes(), 'text/markdown')})
-                response = await client.post('/questions', json={'question': 'ค่ารถเบิกได้เท่าไร', 'top_k': 2})
+                prepared = await client.post('/api/v1/documents', files={'file': ('handbook.md', (Path(__file__).resolve().parents[2] / 'samples/company-handbook.md').read_bytes(), 'text/markdown')})
+                response = await client.post('/api/v1/questions', json={'question': 'ค่ารถเบิกได้เท่าไร', 'top_k': 2})
         self.assertEqual(prepared.status_code, 201)
         self.assertEqual(prepared.json()['chunks'], 2)
         self.assertEqual(response.status_code, 200)
@@ -47,7 +47,7 @@ class RagApiTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_question_before_ingestion_returns_conflict(self):
         async with OriginalClient(transport=httpx.ASGITransport(app=app), base_url='http://test') as client:
-            response = await client.post('/questions', json={'question': 'test'})
+            response = await client.post('/api/v1/questions', json={'question': 'test'})
         self.assertEqual(response.status_code, 409)
 
     async def test_failed_ingestion_preserves_previous_chunks(self):
@@ -57,7 +57,7 @@ class RagApiTests(unittest.IsolatedAsyncioTestCase):
             raise httpx.ConnectError('unavailable')
         async with OriginalClient(transport=httpx.ASGITransport(app=app), base_url='http://test') as client:
             with patch('app.services.ollama.httpx.AsyncClient', side_effect=lambda **kw: OriginalClient(transport=httpx.MockTransport(handler), **kw)):
-                response = await client.post('/documents', files={'file': ('handbook.md', (Path(__file__).resolve().parents[2] / 'samples/company-handbook.md').read_bytes(), 'text/markdown')})
+                response = await client.post('/api/v1/documents', files={'file': ('handbook.md', (Path(__file__).resolve().parents[2] / 'samples/company-handbook.md').read_bytes(), 'text/markdown')})
         self.assertEqual(response.status_code, 503)
         self.assertEqual(get_chunks(), existing)
 

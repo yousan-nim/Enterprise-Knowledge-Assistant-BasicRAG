@@ -1,7 +1,7 @@
 import httpx
 import math
 
-from app.config import EMBED_MODEL
+from app.config.config import EMBED_MODEL
 
 async def embed_texts(texts: list[str]) -> list[list[float]]:
     if not texts:
