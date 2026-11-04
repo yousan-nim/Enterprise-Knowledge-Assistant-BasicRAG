@@ -1,7 +1,7 @@
 import httpx
 import math
 
-from app.config.config import EMBED_MODEL
+from app.config.config import EMBED_MODEL, OLLAMA_BASE_URL
 
 async def embed_texts(texts: list[str]) -> list[list[float]]:
     if not texts:
@@ -12,7 +12,7 @@ async def embed_texts(texts: list[str]) -> list[list[float]]:
 
     async with httpx.AsyncClient(timeout=120) as client:
         response = await client.post(
-            "http://127.0.0.1:11434/api/embed",
+            f"{OLLAMA_BASE_URL}/api/embed",
             json={
                 "model": EMBED_MODEL,
                 "input": texts,
@@ -76,7 +76,7 @@ async def generate_answer(
 
     async with httpx.AsyncClient(timeout=120) as client:
         response = await client.post(
-            "http://127.0.0.1:11434/api/chat",
+            f"{OLLAMA_BASE_URL}/api/chat",
             json=payload,
         )
 
