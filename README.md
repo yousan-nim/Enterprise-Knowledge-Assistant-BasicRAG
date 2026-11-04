@@ -11,10 +11,10 @@ You can run the launcher directly in Windows PowerShell; a WSL terminal is not r
 Recommended: 16 GB system RAM, at least 8 GB available to Docker and 15 GB free disk.
 Internet is required for the first download.
 
-Clone the DevOps branch (until this feature is merged into `main`):
+Clone the development branch (the default `main` branch may not contain these changes yet):
 
 ```text
-git clone --branch feat/devops-one-command https://github.com/yousan-nim/Enterprise-Knowledge-Assistant-BasicRAG.git
+git clone --branch develop https://github.com/yousan-nim/Enterprise-Knowledge-Assistant-BasicRAG.git
 cd Enterprise-Knowledge-Assistant-BasicRAG
 ```
 
