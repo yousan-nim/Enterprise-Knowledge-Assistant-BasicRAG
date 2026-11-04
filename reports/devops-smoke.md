@@ -19,3 +19,13 @@ Branch: `feat/devops-one-command`.
 
 GitHub Actions is configured to run tests and build the image. Its remote result is separate
 from these local checks; model downloads/inference are not part of CI.
+
+## Cross-platform launcher follow-up
+
+- Added Windows PowerShell launcher `scripts/dev.ps1` with cryptographic password generation,
+  UTF-8 without BOM, preservation of an existing `.env`, checked Docker exit codes and working-directory restoration.
+- Launcher tests passed under native PowerShell 7 on macOS, including paths containing spaces and failure cases.
+- Running the PowerShell launcher against real Docker on macOS also completed with all services healthy.
+- The Python suite still passed all 84 tests.
+- CI now includes Windows PowerShell 5.1 and PowerShell 7 launcher checks on `windows-latest`.
+  These use simulated Docker commands; a full Windows Docker/LLM run has not been performed locally.

@@ -5,18 +5,38 @@ Upload a TXT, Markdown or text-based PDF, ask questions, and inspect cited passa
 
 ## Run with one command
 
-Prerequisites: Docker Desktop running (or Docker Engine with Compose v2), internet for the first download,
-and a POSIX shell (macOS/Linux or Windows WSL). Recommended: a machine with 16 GB RAM, at least
-8 GB assigned to Docker and 15 GB free disk for images and models.
+Install [Git](https://git-scm.com/downloads) and [Docker Desktop](https://www.docker.com/products/docker-desktop/),
+then start Docker Desktop. On Windows, use its **Linux containers** backend (WSL 2 is recommended).
+You can run the launcher directly in Windows PowerShell; a WSL terminal is not required.
+Recommended: 16 GB system RAM, at least 8 GB available to Docker and 15 GB free disk.
+Internet is required for the first download.
 
-From the cloned repository:
+Clone the DevOps branch (until this feature is merged into `main`):
 
-```bash
-./scripts/dev.sh
+```text
+git clone --branch feat/devops-one-command https://github.com/yousan-nim/Enterprise-Knowledge-Assistant-BasicRAG.git
+cd Enterprise-Knowledge-Assistant-BasicRAG
 ```
 
+**macOS (Intel / Apple Silicon), Linux, or Windows WSL:**
+
+```bash
+sh scripts/dev.sh
+```
+
+**Windows PowerShell or Command Prompt:**
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\dev.ps1
+```
+
+The Windows command sets the execution policy only for that process; it does not change your machine's
+policy. Both launchers run the same Linux containers and create the same `.env` format. No Bash, Python,
+OpenSSL or separately installed Ollama is required on Windows. If an organization enforces a restrictive
+PowerShell policy, follow that policy or use the WSL command.
+
 Open **http://127.0.0.1:8080/docs**. No Python installation, API key or separate Ollama installation is required.
-The script generates a private, Git-ignored `.env` if none exists, builds the backend, starts PostgreSQL
+The launcher generates a local, Git-ignored `.env` if none exists, builds the backend, starts PostgreSQL
 and Ollama, downloads `embeddinggemma` and `qwen2.5:3b`, and waits for the API to become healthy.
 The first run downloads several GB and may take several minutes; subsequent runs reuse Docker volumes.
 
@@ -47,11 +67,11 @@ original passages. Scanned pages are not read; PDFs containing no readable text 
 docker compose ps                       # Service status
 docker compose logs -f backend models    # API and model download logs
 docker compose down                     # Stop; retain documents and models
-./scripts/dev.sh                        # Start again
+# Start again: use the macOS/Linux or Windows launcher above
 ```
 
 To change ports, edit `API_PORT` (default `8080`) or `POSTGRES_PORT` (default `5433`) in `.env`, then rerun
-the startup command. PostgreSQL credentials persist in its volume; editing `.env` alone does not change
+the launcher for your operating system. PostgreSQL credentials persist in its volume; editing `.env` alone does not change
 an existing database password. `docker compose down -v` deletes documents and downloaded models.
 If startup fails, inspect the logs above and rerun after resolving the error. A model-download failure
 prevents the backend from starting rather than reporting success with missing models.
@@ -86,7 +106,7 @@ docker compose up -d --wait postgres
 backend/.venv/bin/python -m uvicorn app.main:app --app-dir backend --reload --host 127.0.0.1 --port 8000
 ```
 
-Run `./scripts/dev.sh` once first to generate `.env`, or copy `.env.example` to `.env` and replace the
+Run the launcher for your operating system once first to generate `.env`, or copy `.env.example` to `.env` and replace the
 password. Host Python defaults to Ollama at `http://127.0.0.1:11434`; set `OLLAMA_BASE_URL` to override.
 The container uses `http://ollama:11434`. Backend PostgreSQL settings use `.env` with process environment overrides.
 
@@ -105,3 +125,8 @@ Learning notes: [scope](docs/SPEC.md), [learning path](docs/LEARNING_PATH.md).
 Container setup follows [Ollama Docker documentation](https://docs.ollama.com/docker),
 [Compose dependency conditions](https://docs.docker.com/compose/how-tos/startup-order/), and
 [pgvector documentation](https://github.com/pgvector/pgvector).
+
+Windows setup follows [Docker Desktop installation guidance](https://docs.docker.com/desktop/setup/install/windows-install/)
+and [PowerShell command-line documentation](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_powershell_exe).
+The CI Windows job checks the launcher under Windows PowerShell 5.1 and PowerShell 7 with simulated
+Docker commands; it does not run the full LLM stack on a Windows runner.

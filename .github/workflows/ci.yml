@@ -42,3 +42,15 @@ jobs:
       - name: Stop services
         if: always()
         run: docker compose down
+
+  windows-launcher:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify launcher with Windows PowerShell 5.1
+        shell: powershell
+        run: ./scripts/test-dev.ps1
+      - name: Verify launcher with PowerShell 7
+        shell: pwsh
+        run: ./scripts/test-dev.ps1
