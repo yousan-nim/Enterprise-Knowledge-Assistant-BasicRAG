@@ -1,3 +1,4 @@
+from storage_double import use_storage_double
 import json
 import unittest
 import tempfile
@@ -11,6 +12,7 @@ OriginalClient = httpx.AsyncClient
 
 class RagApiTests(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
+        use_storage_double(self)
         self.setup_database()
 
     def setup_database(self):
@@ -51,7 +53,7 @@ class RagApiTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(response.status_code, 409)
 
     async def test_failed_ingestion_preserves_previous_chunks(self):
-        existing = [{'id': 'old', 'document_id': 'old-doc', 'text': 'old', 'source': 'old.md', 'embedding': [1., 0.]}]
+        existing = [{'id': 'old', 'document_id': 'old-doc', 'text': 'old', 'source': 'old.md', 'embedding': [1., 0.], 'page': 1, 'extraction_method': 'direct'}]
         replace_chunks(existing)
         def handler(request):
             raise httpx.ConnectError('unavailable')
@@ -62,7 +64,7 @@ class RagApiTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(get_chunks(), existing)
 
     def test_memory_getter_does_not_expose_list(self):
-        replace_chunks([{'id':'old','document_id':'old-doc','text':'old','source':'old.md','embedding':[1.,0.]}])
+        replace_chunks([{'id':'old','document_id':'old-doc','text':'old','source':'old.md','embedding':[1.,0.], 'page': 1, 'extraction_method': 'direct'}])
         returned = get_chunks()
         returned.clear()
         self.assertEqual(len(get_chunks()), 1)

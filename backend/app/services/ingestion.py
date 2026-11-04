@@ -1,40 +1,36 @@
 from pathlib import Path
 from uuid import uuid4
 
+from app.schemas.documents import DocumentPage
 from app.services.chunking import chunk_text
 from app.services.ollama import embed_texts
-from app.storage.sqlite import replace_chunks
+from starlette.concurrency import run_in_threadpool
+from app.storage.postgres import replace_chunks
+
+
+async def ingest_pages(pages: list[DocumentPage], source: str) -> dict:
+    pieces = [
+        {"text": chunk, "page": page.page, "extraction_method": page.extraction_method}
+        for page in pages
+        for chunk in chunk_text(page.text, chunk_size=250, overlap=50)
+    ]
+    if not pieces:
+        raise ValueError("The document contains no text.")
+
+    vectors = await embed_texts([piece["text"] for piece in pieces])
+    document_id = str(uuid4())
+    chunks = [
+        {"id": f"chunk-{index}", "document_id": document_id, "source": source,
+         "embedding": vector, **piece}
+        for index, (piece, vector) in enumerate(zip(pieces, vectors), start=1)
+    ]
+    await run_in_threadpool(replace_chunks, chunks)
+    return {"document_id": document_id, "source": source, "chunks": len(chunks)}
 
 
 async def ingest_text(text: str, source: str) -> dict:
-    texts = chunk_text(text, chunk_size=250, overlap=50)
-    
-    if not texts: 
-        raise ValueError("The document contains no text.")
-    
-    vectors = await embed_texts(texts)
-    document_id = str(uuid4())
-    
-    chunks = [
-        {
-            "id": f"chunk-{index}",
-        "document_id": document_id, 
-        "text" : chunk,
-        "source": source,
-        "embedding": vector,
-        }
-        
-        for index, (chunk, vector) in enumerate(zip(texts, vectors), start=1)
-    ]
-    
-    replace_chunks(chunks)
-    
-    return {
-        "document_id": document_id,
-        "source": source,
-        "chunks": len(chunks),
-    }
-    
+    return await ingest_pages([DocumentPage(page=1, text=text)], source)
+
 
 async def ingest_document(path: Path) -> dict:
     text = path.read_text(encoding="utf-8")

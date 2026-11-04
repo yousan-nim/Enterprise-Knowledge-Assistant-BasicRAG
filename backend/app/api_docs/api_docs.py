@@ -17,15 +17,15 @@ class HealthResponse(BaseModel):
 
 
 DESCRIPTION = """
-Local document question answering with FastAPI, Ollama and SQLite.
+Local document question answering with FastAPI, Ollama and PostgreSQL.
 
 ## Try the workflow
-1. Call **POST /api/v1/documents** with a UTF-8 TXT or Markdown file.
+1. Call **POST /api/v1/documents** with a UTF-8 TXT/Markdown or text-based PDF file.
 2. Call **POST /api/v1/questions** with a question and `top_k`.
 3. Inspect `sources` to check the evidence behind `citation_ids`.
 
 One document is stored at a time. A successful upload replaces it; failed ingestion preserves it.
-SQLite retains the document and vectors across restarts. Re-upload after changing the embedding model,
+PostgreSQL retains the document and vectors across restarts. Re-upload after changing the embedding model,
 including updating its weights under the same name.
 
 `found` is derived from the model's answer, not an independent factual check.
@@ -37,7 +37,7 @@ This is a local, single-user learning application with no authentication. Bind t
 
 TAGS = [
     {"name": "Health", "description": "Application liveness only; not an Ollama or database readiness check."},
-    {"name": "Documents", "description": "Upload and index one TXT/Markdown document in SQLite."},
+    {"name": "Documents", "description": "Upload and index one TXT/Markdown/PDF document in PostgreSQL."},
     {"name": "RAG", "description": "Retrieve document excerpts and generate structured, cited answers."},
     {"name": "Chat", "description": "Direct model chat without document retrieval."},
 ]
@@ -58,15 +58,15 @@ QUESTION_ERRORS = errors({
     409: "No document is indexed, or its embedding model differs from the configured model. Upload again.",
     422: "Invalid question or top_k. A whitespace-only question is rejected.",
     502: "Retrieval, embedding or structured answer validation failed, including after the bounded retry.",
-    503: "SQLite or Ollama is unavailable.",
+    503: "PostgreSQL or Ollama is unavailable.",
     504: "Ollama request timed out.",
 })
 DOCUMENT_ERRORS = errors({
-    413: "File exceeds 1 MiB, or extracted text exceeds 50,000 Python characters.",
-    415: "Filename extension is not .txt or .md (case-insensitive). PDF is not supported.",
-    422: "Missing file, invalid UTF-8, whitespace-only text, or null characters.",
-    502: "The embedding response is invalid.",
-    503: "Ollama is unavailable or the document cannot be saved to SQLite.",
+    413: "Uploaded file exceeds 1 MiB.",
+    415: "Filename extension is not .txt, .md or .pdf (case-insensitive).",
+    422: "Missing file, invalid UTF-8, empty text, null characters, damaged/encrypted PDF, more than 50 PDF pages or 50,000 extracted characters. Scanned PDFs without readable text require OCR.",
+    502: "The extracted text or embedding response is invalid.",
+    503: "Ollama is unavailable or the document cannot be saved to PostgreSQL.",
     504: "Embedding request timed out.",
 })
 
@@ -78,11 +78,28 @@ QUESTION_EXAMPLES = {
                 "answer": "เบิกได้สูงสุด 500 บาทต่อวัน โดยต้องแนบใบเสร็จ",
                 "citation_ids": ["chunk-2"], "found": True,
                 "sources": [{"id": "chunk-2", "text": "Travel expenses are reimbursed up to THB 500 per day. Receipts are required.",
-                             "source": "handbook.md", "score": 0.4279}]}},
+                             "source": "handbook.md", "page": 1, "extraction_method": "direct", "score": 0.4279}]}},
             "not_found": {"summary": "Retrieved evidence does not answer the question", "value": {
                 "answer": "ไม่พบข้อมูลในเอกสาร", "citation_ids": [], "found": False,
                 "sources": [{"id": "chunk-1", "text": "Remote work is allowed two days per week.",
-                             "source": "handbook.md", "score": 0.2818}]}}
+                             "source": "handbook.md", "page": 1, "extraction_method": "direct", "score": 0.2818}]}}
         }}},
     }
 }
+
+
+class DocumentSummary(BaseModel):
+    document_id: str
+    source: str
+    embedding_model: str
+    chunks: int = Field(ge=0)
+
+
+DOCUMENT_LIST_ERRORS = errors({
+    503: "Cannot read documents from PostgreSQL.",
+})
+
+DOCUMENT_DELETE_ERRORS = errors({
+    404: "Document not found.",
+    503: "Cannot delete the document from PostgreSQL.",
+})

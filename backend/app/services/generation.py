@@ -60,7 +60,7 @@ async def answer_with_sources(
         )
 
     context = "\n\n".join(
-        f"[{result['id']}] Source: {result['source']}\n"
+        f"[{result['id']}] Source: {result['source']}, page {result.get('page', 1)}\n"
         f"{result['text']}"
         for result in results
     )

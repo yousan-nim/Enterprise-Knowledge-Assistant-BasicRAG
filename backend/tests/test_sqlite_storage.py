@@ -20,7 +20,7 @@ class SqliteStorageTests(unittest.TestCase):
         patcher.start()
         self.addCleanup(patcher.stop)
         self.chunks = [{'document_id':'doc-1','id':'chunk-1','source':'demo.md',
-                        'text':'Sample evidence','embedding':[1.,0.]}]
+                        'text':'Sample evidence','embedding':[1.,0.], 'page': 1, 'extraction_method': 'direct'}]
 
     def test_new_process_reads_persisted_vectors(self):
         storage.replace_chunks(self.chunks)
@@ -32,14 +32,14 @@ class SqliteStorageTests(unittest.TestCase):
 
     def test_transaction_failure_restores_old_document(self):
         storage.replace_chunks(self.chunks)
-        duplicate = {'document_id':'doc-2','id':'same','source':'new.md','text':'new','embedding':[0.,1.]}
+        duplicate = {'document_id':'doc-2','id':'same','source':'new.md','text':'new','embedding':[0.,1.], 'page': 1, 'extraction_method': 'direct'}
         with self.assertRaises(sqlite3.IntegrityError):
             storage.replace_chunks([duplicate,duplicate])
         self.assertEqual(storage.get_chunks(),self.chunks)
 
     def test_replacement_removes_old_chunks(self):
         storage.replace_chunks(self.chunks)
-        new = [{'document_id':'doc-2','id':'chunk-2','source':'new.md','text':'new','embedding':[0.,1.]}]
+        new = [{'document_id':'doc-2','id':'chunk-2','source':'new.md','text':'new','embedding':[0.,1.], 'page': 1, 'extraction_method': 'direct'}]
         storage.replace_chunks(new)
         self.assertEqual(storage.get_chunks(),new)
 
@@ -48,3 +48,29 @@ class SqliteStorageTests(unittest.TestCase):
         with patch('app.storage.sqlite.EMBED_MODEL','different-model'):
             with self.assertRaisesRegex(ValueError,'model changed'):
                 storage.get_chunks()
+
+
+    def test_lists_document_metadata_and_chunk_count(self):
+        self.assertEqual(storage.get_documents(), [])
+        storage.replace_chunks(self.chunks)
+        self.assertEqual(storage.get_documents(), [{
+            'document_id': 'doc-1', 'source': 'demo.md',
+            'embedding_model': storage.EMBED_MODEL, 'chunks': 1,
+        }])
+
+    def test_delete_cascades_and_persists(self):
+        storage.replace_chunks(self.chunks)
+        self.assertTrue(storage.delete_document('doc-1'))
+        self.assertEqual(storage.get_documents(), [])
+        self.assertEqual(storage.get_chunks(), [])
+        connection = storage.connect()
+        try:
+            self.assertEqual(connection.execute('SELECT COUNT(*) FROM chunks').fetchone()[0], 0)
+        finally:
+            connection.close()
+        self.assertFalse(storage.delete_document('doc-1'))
+
+    def test_delete_unknown_id_preserves_existing_document(self):
+        storage.replace_chunks(self.chunks)
+        self.assertFalse(storage.delete_document("doc-1' OR 1=1 --"))
+        self.assertEqual(storage.get_chunks(), self.chunks)

@@ -19,8 +19,12 @@ class VersionedRoutesTests(unittest.IsolatedAsyncioTestCase):
             response=await client.get('/openapi.json')
         self.assertEqual(response.status_code,200)
         schema=response.json()
-        self.assertEqual(set(schema['paths']),{'/api/v1/health','/api/v1/chat','/api/v1/documents','/api/v1/questions'})
+        self.assertEqual(set(schema['paths']),{'/api/v1/health','/api/v1/chat','/api/v1/documents','/api/v1/documents/{document_id}','/api/v1/questions'})
         upload=schema['paths']['/api/v1/documents']['post']
         self.assertIn('multipart/form-data',upload['requestBody']['content'])
         question=schema['paths']['/api/v1/questions']['post']
         self.assertEqual(len(question['responses']['200']['content']['application/json']['examples']),2)
+
+        self.assertIn('get', schema['paths']['/api/v1/documents'])
+        delete = schema['paths']['/api/v1/documents/{document_id}']['delete']
+        self.assertNotIn('content', delete['responses']['204'])

@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 from app.schemas.schemas import GroundedAnswer
@@ -16,6 +18,8 @@ class QuestionRequest(BaseModel):
     top_k: int = Field(default=3, ge=1, le=10, description="Maximum retrieved chunks. May return fewer if the document has fewer chunks.", examples=[1])
 
 class RetrievedSource(BaseModel):
+    page: int = Field(default=1, ge=1, description="1-based PDF page index; TXT/Markdown use page 1.")
+    extraction_method: Literal["direct", "ocr"] = Field(default="direct", description="How the source text was extracted.")
     id: str = Field(description="Excerpt ID used by citation_ids.", examples=["chunk-2"])
     text: str = Field(description="Retrieved original text for evidence inspection.")
     source: str = Field(description="Uploaded document filename.", examples=["handbook.md"])

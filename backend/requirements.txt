@@ -1,1 +1,9 @@
-# Add and pin dependencies when each lesson needs them.
+# Direct dependencies pinned to the tested development environment.
+fastapi==0.162.0
+uvicorn==0.54.0
+httpx==0.28.1
+pydantic==2.14.2
+python-multipart==0.0.33
+pypdf==6.21.4
+psycopg[binary]==3.3.8
+python-dotenv==1.2.4

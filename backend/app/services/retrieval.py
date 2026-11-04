@@ -51,6 +51,8 @@ def search_chunks(
              "id": chunk["id"],
             "text": chunk["text"],
             "source": chunk["source"],
+            "page": chunk.get("page", 1),
+            "extraction_method": chunk.get("extraction_method", "direct"),
             "score": score,
         })
     
