@@ -20,7 +20,7 @@ DESCRIPTION = """
 Local document question answering with FastAPI, Ollama and PostgreSQL.
 
 ## Try the workflow
-1. Call **POST /api/v1/documents** with a UTF-8 TXT/Markdown or text-based PDF file.
+1. Call **POST /api/v1/documents** with a UTF-8 TXT/Markdown or PDF file (OCR fallback for pages without text).
 2. Call **POST /api/v1/questions** with a question and `top_k`.
 3. Inspect `sources` to check the evidence behind `citation_ids`.
 
@@ -64,7 +64,7 @@ QUESTION_ERRORS = errors({
 DOCUMENT_ERRORS = errors({
     413: "Uploaded file exceeds 1 MiB.",
     415: "Filename extension is not .txt, .md or .pdf (case-insensitive).",
-    422: "Missing file, invalid UTF-8, empty text, null characters, damaged/encrypted PDF, more than 50 PDF pages or 50,000 extracted characters. Scanned PDFs without readable text require OCR.",
+    422: "Missing file, invalid UTF-8, empty text, null characters, damaged/encrypted PDF, more than 50 PDF pages or 50,000 extracted characters. OCR failure, no readable text after OCR, more than 5 OCR pages (including blank pages), or the OCR processing budget was exceeded.",
     502: "The extracted text or embedding response is invalid.",
     503: "Ollama is unavailable or the document cannot be saved to PostgreSQL.",
     504: "Embedding request timed out.",

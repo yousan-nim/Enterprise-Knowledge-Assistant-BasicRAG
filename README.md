@@ -1,7 +1,7 @@
 # Enterprise Knowledge Assistant — Basic RAG
 
 A local document question-answering API built with **FastAPI, Ollama and PostgreSQL + pgvector**.
-Upload a TXT, Markdown or text-based PDF, ask questions, and inspect cited passages with page numbers.
+Upload a TXT, Markdown or PDF (with Thai/English OCR fallback), ask questions, and inspect cited passages with page numbers.
 
 ## Run with one command
 
@@ -42,12 +42,12 @@ The first run downloads several GB and may take several minutes; subsequent runs
 
 This portable setup runs Ollama on CPU. On a Mac it does not use native Metal acceleration, so generation
 can be slower than running Ollama directly on the host. This repository currently exposes a Swagger API;
-the Next.js frontend is not implemented. There is no OCR or authentication. Services published to the host
+the Next.js frontend is not implemented. There is no authentication. Services published to the host
 bind to loopback for local demos.
 
 ### Try the workflow
 
-1. In Swagger, call `POST /api/v1/documents` using `samples/company-handbook.md` or a text-based PDF.
+1. In Swagger, call `POST /api/v1/documents` using `samples/company-handbook.md` or a PDF.
 2. Call `POST /api/v1/questions` with:
 
    ```json
@@ -59,7 +59,12 @@ bind to loopback for local demos.
 
 One document is indexed at a time. A successful upload replaces the previous document; a failed ingestion
 preserves it. Similarity is not confidence, and valid citations do not prove factual correctness. Review
-original passages. Scanned pages are not read; PDFs containing no readable text are rejected.
+original passages. Pages without extractable text use Thai/English OCR. Blank pages also count
+against the limit of 5 OCR pages per file. A 120-second budget is checked before each OCR page;
+a page already started may take up to another 30 seconds rendering plus 30 seconds recognition.
+OCR failure or an exceeded limit rejects the whole upload and preserves the previous document.
+PDFs containing no readable text even after OCR are rejected. Pages with existing text use that
+text directly; this does not recover image text on pages that also contain a text layer.
 
 ## Operate the stack
 
@@ -130,3 +135,21 @@ Windows setup follows [Docker Desktop installation guidance](https://docs.docker
 and [PowerShell command-line documentation](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_powershell_exe).
 The CI Windows job checks the launcher under Windows PowerShell 5.1 and PowerShell 7 with simulated
 Docker commands; it does not run the full LLM stack on a Windows runner.
+
+## OCR fallback
+
+The backend image includes Poppler and Tesseract with Thai and English language packs.
+`app.services.ocr.extract_page_text()` renders and recognizes a single PDF page, with
+separate rendering and recognition timeouts. The PDF parser calls it only on pages without extractable text. Source page numbers and
+`extraction_method` (`direct` or `ocr`) are preserved through storage and retrieved citations.
+
+Run real OCR checks in the built image (no model downloads needed):
+
+```bash
+docker compose build backend
+docker compose run --rm --no-deps -T -e RUN_OCR_TESTS=1 -e PYTHONPATH=backend -v "$(pwd):/workspace:ro" -w /workspace backend python -m unittest discover -s backend/tests -p 'test_ocr*.py' -q
+```
+
+The test command above uses a POSIX shell. In Windows PowerShell, replace `$(pwd)` with `${PWD}`.
+The checks include an image-only English PDF, a blank scan, invalid input and installed Thai/English packs.
+A clean synthetic Thai/English scan is covered by regression tests; recognition quality on real-world scans has not been established. See `samples/ocr/README.md`.
