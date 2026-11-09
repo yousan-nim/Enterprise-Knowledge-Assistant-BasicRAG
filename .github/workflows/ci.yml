@@ -36,6 +36,8 @@ jobs:
         run: python -m unittest discover -s backend/tests -p 'test_*.py' -q
       - name: Build backend image
         run: docker compose build backend
+      - name: Check real OCR tools in the image
+        run: docker compose run --rm --no-deps -T -e RUN_OCR_TESTS=1 -e RUN_POSTGRES_TESTS=1 -e PYTHONPATH=backend -v "${{ github.workspace }}:/workspace:ro" -w /workspace backend python -m unittest discover -s backend/tests -p 'test_*.py' -q
       - name: Database logs on failure
         if: failure()
         run: docker compose logs postgres

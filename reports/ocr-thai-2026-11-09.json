@@ -1,0 +1,10 @@
+{
+  "expected": "นโยบายการเดินทาง\nเบิกค่าเดินทางได้สูงสุด 500 บาทต่อวัน\nต้องแนบใบเสร็จทุกครั้ง\nTravel reimbursement: THB 500 per day.\n",
+  "actual": "นโยบายการเดินทาง\n\nเบิกค่าเดินทางได้สูงสุด 500 บาทต่อวัน\nv                   ๕          &\n\nต้องแนบใบเสร็จทุกครั้ง\n\nTravel reimbursement: THB 500 per day.",
+  "reference_characters": 106,
+  "character_edits": 3,
+  "cer": 0.02830188679245283,
+  "page": 1,
+  "extraction_method": "ocr",
+  "tesseract": "tesseract 5.5.0"
+}

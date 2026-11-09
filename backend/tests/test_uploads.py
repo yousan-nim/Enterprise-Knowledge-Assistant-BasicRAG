@@ -13,6 +13,9 @@ class UploadTests(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
         use_storage_double(self)
         self.setup_database()
+        patcher = patch('app.services.parsing.extract_page_text', return_value='')
+        self.ocr = patcher.start()
+        self.addCleanup(patcher.stop)
         self.old=[{'id':'old','document_id':'old-doc','text':'old','source':'old.md','embedding':[1.,0.], 'page': 1, 'extraction_method': 'direct'}]
         replace_chunks(self.old)
     def setup_database(self):
@@ -72,3 +75,25 @@ class UploadTests(unittest.IsolatedAsyncioTestCase):
                         self.assertEqual(response.status_code, 422, response.text)
                         self.assertEqual(get_chunks(), self.old)
                 embed.assert_not_awaited()
+
+    async def test_ocr_failure_preserves_previous_document(self):
+        from app.services.ocr import OcrError
+        self.ocr.side_effect = OcrError('Text recognition exceeded its time limit.')
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url='http://test') as client:
+            with patch('app.services.ingestion.embed_texts', new_callable=AsyncMock) as embed:
+                response = await client.post('/api/v1/documents', files={'file': ('scan.pdf', make_pdf(['']))})
+        self.assertEqual(response.status_code, 422)
+        self.assertIn('page 1', response.json()['detail'])
+        self.assertEqual(get_chunks(), self.old)
+        embed.assert_not_awaited()
+
+    async def test_mixed_pdf_indexes_ocr_text_with_page_metadata(self):
+        self.ocr.return_value = 'Recognized second page'
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url='http://test') as client:
+            with patch('app.services.ingestion.embed_texts', new_callable=AsyncMock, return_value=[[1., 0.], [0., 1.]]):
+                response = await client.post('/api/v1/documents', files={'file': ('mixed.pdf', make_pdf(['Direct first page', '']))})
+        self.assertEqual(response.status_code, 201, response.text)
+        chunks = get_chunks()
+        self.assertEqual([c['page'] for c in chunks], [1, 2])
+        self.assertEqual([c['extraction_method'] for c in chunks], ['direct', 'ocr'])
+        self.assertEqual(chunks[1]['text'], 'Recognized second page')
