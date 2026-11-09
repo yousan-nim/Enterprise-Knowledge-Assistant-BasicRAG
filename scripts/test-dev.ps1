@@ -44,3 +44,6 @@ finally {
     Remove-Variable DockerTestCalls, DockerTestFail -Scope Global
     Remove-Item -LiteralPath $testRoot -Recurse -Force
 }
+
+# Intentional Docker failure tests leave LASTEXITCODE=1; report success only after all assertions and cleanup pass.
+exit 0
