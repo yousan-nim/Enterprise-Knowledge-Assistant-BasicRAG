@@ -1,7 +1,11 @@
-# Enterprise Knowledge Assistant — Basic RAG
+# Enterprise Knowledge Assistant — Folio
 
-A local document question-answering API built with **FastAPI, Ollama and PostgreSQL + pgvector**.
+A local document knowledge workspace with a responsive glass UI, built with **Next.js, FastAPI, Ollama and PostgreSQL + pgvector**.
 Upload a TXT, Markdown or PDF (with Thai/English OCR fallback), ask questions, and inspect cited passages with page numbers.
+
+![Folio workspace with a real document-grounded answer](docs/screenshots/folio-workspace.png)
+
+[Mobile preview](docs/screenshots/folio-mobile.png) · [Frontend implementation and testing](frontend/README.md)
 
 ## Run with one command
 
@@ -35,19 +39,24 @@ policy. Both launchers run the same Linux containers and create the same `.env` 
 OpenSSL or separately installed Ollama is required on Windows. If an organization enforces a restrictive
 PowerShell policy, follow that policy or use the WSL command.
 
-Open **http://127.0.0.1:8080/docs**. No Python installation, API key or separate Ollama installation is required.
-The launcher generates a local, Git-ignored `.env` if none exists, builds the backend, starts PostgreSQL
+Open **http://localhost:3000** for the workspace. API docs remain at **http://localhost:8080/docs**. No Python installation, API key or separate Ollama installation is required.
+The launcher generates a local, Git-ignored `.env` if none exists, builds the frontend and backend, starts PostgreSQL
 and Ollama, downloads `embeddinggemma` and `qwen2.5:3b`, and waits for the API to become healthy.
 The first run downloads several GB and may take several minutes; subsequent runs reuse Docker volumes.
 
 This portable setup runs Ollama on CPU. On a Mac it does not use native Metal acceleration, so generation
-can be slower than running Ollama directly on the host. This repository currently exposes a Swagger API;
-the Next.js frontend is not implemented. There is no authentication. Services published to the host
+can be slower than running Ollama directly on the host. The responsive Next.js workspace supports document upload, grounded Q&A, source inspection and direct chat. There is no authentication. Services published to the host
 bind to loopback for local demos.
 
 ### Try the workflow
 
-1. In Swagger, call `POST /api/v1/documents` using `samples/company-handbook.md` or a PDF.
+1. Open the workspace and choose **Try the sample document**, or upload your own PDF/TXT/Markdown file.
+2. Ask a question in **Document Q&A**, then open the cited passages to inspect their source page.
+3. Switch to **Free chat** for a conversation that does not search your document.
+
+For API-only testing in Swagger:
+
+1. Call `POST /api/v1/documents` using `samples/company-handbook.md` or a PDF.
 2. Call `POST /api/v1/questions` with:
 
    ```json
@@ -75,7 +84,7 @@ docker compose down                     # Stop; retain documents and models
 # Start again: use the macOS/Linux or Windows launcher above
 ```
 
-To change ports, edit `API_PORT` (default `8080`) or `POSTGRES_PORT` (default `5433`) in `.env`, then rerun
+To change ports, edit `WEB_PORT` (default `3000`), `API_PORT` (default `8080`) or `POSTGRES_PORT` (default `5433`) in `.env`, then rerun
 the launcher for your operating system. PostgreSQL credentials persist in its volume; editing `.env` alone does not change
 an existing database password. `docker compose down -v` deletes documents and downloaded models.
 If startup fails, inspect the logs above and rerun after resolving the error. A model-download failure
@@ -88,6 +97,7 @@ Upload → Parse pages → Chunk each page → Ollama embeddings → PostgreSQL 
 Question → Ollama embedding → pgvector exact cosine search → LLM → Answer + citations
 ```
 
+- `frontend/`: Next.js App Router, accessible responsive UI, same-origin API proxy and browser tests
 - `backend/app/routes/`: versioned HTTP endpoints under `/api/v1`
 - `backend/app/services/`: parsing, chunking, model calls, ingestion and grounded generation
 - `backend/app/storage/postgres.py`: transactional document replacement and vector search
@@ -153,3 +163,9 @@ docker compose run --rm --no-deps -T -e RUN_OCR_TESTS=1 -e PYTHONPATH=backend -v
 The test command above uses a POSIX shell. In Windows PowerShell, replace `$(pwd)` with `${PWD}`.
 The checks include an image-only English PDF, a blank scan, invalid input and installed Thai/English packs.
 A clean synthetic Thai/English scan is covered by regression tests; recognition quality on real-world scans has not been established. See `samples/ocr/README.md`.
+
+## Frontend development
+
+See [frontend/README.md](frontend/README.md) for local Node.js development, browser tests,
+and the server-side proxy boundary. The existing Mac and Windows launchers now start the whole stack,
+including the frontend. Existing document data is retained.
