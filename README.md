@@ -83,6 +83,13 @@ its model volume is retained. Keep the same embedding model digest when switchin
 vectors before reusing an existing index; changing embedding models requires re-indexing. Neither launcher
 clears stored documents. The native override uses Compose's [`!reset` merge tag](https://docs.docker.com/reference/compose-file/merge/).
 
+### API process diagrams
+
+Choose **API Flows** in the navbar, or open **http://localhost:3000/api-flows**.
+The six endpoint diagrams include the frontend proxy and native/Docker Ollama deployment notes.
+The source is `docs/diagrams/api-endpoints.html`; keep its published copy at
+`frontend/public/diagrams/api-endpoints.html` in sync when updating the diagrams.
+
 ### Try the workflow
 
 1. Open the workspace and choose **Try the sample document**, or upload your own PDF/TXT/Markdown file.

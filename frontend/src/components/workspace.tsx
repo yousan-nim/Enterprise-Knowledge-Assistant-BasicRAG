@@ -4,6 +4,7 @@ import { Answer, api, DocumentInfo, Source, validateFile } from "@/lib/api";
 import { Documents } from "./documents";
 import { Evidence } from "./evidence";
 import { Icon } from "./icon";
+import { SiteNav } from "./site-nav";
 type Message = {
   id: string;
   role: "user" | "assistant";
@@ -251,6 +252,7 @@ export function Workspace() {
           <span className="brand-divider" />
           <small>KNOWLEDGE WORKSPACE</small>
         </a>
+        <SiteNav />
         <div className="top-actions">
           <span
             className={`connection ${connected === false ? "offline" : ""}`}
