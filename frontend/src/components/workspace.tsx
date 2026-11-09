@@ -48,7 +48,6 @@ export function Workspace() {
   const [notice, setNotice] = useState<string | null>(null);
   const bottom = useRef<HTMLDivElement>(null);
   const question = useRef<HTMLTextAreaElement>(null);
-  const info = useRef<HTMLDialogElement>(null);
   const documentId = useRef<string | null>(null);
   const busy = uploading || asking || deleting || sampling;
   const evidence = messages.find((message) => message.id === activeEvidence);
@@ -265,13 +264,6 @@ export function Workspace() {
                 ? "API connected"
                 : "API unavailable"}
           </span>
-          <button
-            className="icon-button about-button"
-            aria-label="About this workspace"
-            onClick={() => info.current?.showModal()}
-          >
-            <Icon name="info" />
-          </button>
         </div>
       </header>
       <main className="main-shell">
@@ -580,51 +572,6 @@ export function Workspace() {
           </span>
         </footer>
       </main>
-      <dialog
-        className="about-dialog glass"
-        aria-labelledby="about-title"
-        ref={info}
-        onClick={(event) => {
-          if (event.target === event.currentTarget) info.current?.close();
-        }}
-      >
-        <button
-          className="icon-button dialog-close"
-          aria-label="Close about"
-          onClick={() => info.current?.close()}
-        >
-          <Icon name="close" />
-        </button>
-        <Logo />
-        <p className="eyebrow">A LITTLE CONTEXT</p>
-        <h2 id="about-title">
-          Meet your knowledge,
-          <br />
-          on a clearer day.
-        </h2>
-        <p>
-          Folio turns one document into a conversation. Upload a PDF, text or
-          Markdown file and ask a question. The answer comes with the original
-          passages so you can check it yourself.
-        </p>
-        <p>
-          Scanned pages can be read with Thai and English OCR. Uploads are
-          limited to 1 MiB, 50 PDF pages, and 5 pages requiring OCR. Uploading a
-          new document replaces the previous one.
-        </p>
-        <p>
-          Free chat talks to the local model without searching your document.
-          History is displayed in this tab, but earlier messages are not sent as
-          context. Each question is answered independently. History is cleared
-          when you reload.
-        </p>
-        <button
-          className="button primary"
-          onClick={() => info.current?.close()}
-        >
-          Let’s explore <Icon name="chevron" size={16} />
-        </button>
-      </dialog>
     </div>
   );
 }

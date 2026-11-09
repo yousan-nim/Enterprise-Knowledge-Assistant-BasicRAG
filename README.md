@@ -83,6 +83,14 @@ its model volume is retained. Keep the same embedding model digest when switchin
 vectors before reusing an existing index; changing embedding models requires re-indexing. Neither launcher
 clears stored documents. The native override uses Compose's [`!reset` merge tag](https://docs.docker.com/reference/compose-file/merge/).
 
+### First-visit introduction
+
+A three-page modal introduces the portfolio/GitHub repository, explains the four-step upload/Q&A
+workflow, and asks visitors to acknowledge the demo limitations. A checked acknowledgment is saved
+in browser local storage; dismissing with X/Escape does not count. The (i) button in the navbar reopens
+the guide from either page. If browser storage is disabled, the guide still works but may reappear
+on the next visit. This acknowledgment is informational; it is not authentication or access control.
+
 ### API process diagrams
 
 Choose **API Flows** in the navbar, or open **http://localhost:3000/api-flows**.

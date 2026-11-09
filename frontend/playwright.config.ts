@@ -7,6 +7,17 @@ export default defineConfig({
   use: {
     baseURL: `http://127.0.0.1:${process.env.FRONTEND_TEST_PORT || 3100}`,
     browserName: "chromium",
+    storageState: {
+      cookies: [],
+      origins: [
+        {
+          origin: `http://127.0.0.1:${process.env.FRONTEND_TEST_PORT || 3100}`,
+          localStorage: [
+            { name: "folio:guide-acknowledged:v1", value: "true" },
+          ],
+        },
+      ],
+    },
     launchOptions: process.env.PLAYWRIGHT_CHROME_PATH
       ? { executablePath: process.env.PLAYWRIGHT_CHROME_PATH }
       : {},

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { GuideButton } from "./project-guide";
 import { usePathname } from "next/navigation";
 
 export function SiteNav() {
@@ -15,6 +16,7 @@ export function SiteNav() {
       >
         API Flows
       </Link>
+      <GuideButton />
     </nav>
   );
 }

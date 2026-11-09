@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ProjectGuide } from "@/components/project-guide";
 export const metadata: Metadata = {
   title: "Folio — A little clarity",
   description:
@@ -15,6 +16,7 @@ export default function RootLayout({
           Skip to conversation
         </a>
         {children}
+        <ProjectGuide />
       </body>
     </html>
   );
