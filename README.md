@@ -48,6 +48,41 @@ This portable setup runs Ollama on CPU. On a Mac it does not use native Metal ac
 can be slower than running Ollama directly on the host. The responsive Next.js workspace supports document upload, grounded Q&A, source inspection and direct chat. There is no authentication. Services published to the host
 bind to loopback for local demos.
 
+### Faster inference on Mac / host GPU
+
+Docker Ollama cannot use Apple Metal. To use native Ollama instead, open the host Ollama app
+and install `embeddinggemma` and `qwen2.5:3b` with `ollama pull <model>` if needed, then run:
+
+```bash
+sh scripts/dev.sh --native
+```
+
+Windows with host Ollama installed can use:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\dev.ps1 -NativeOllama
+```
+
+This selects `docker-compose.native.yml`: only the frontend, backend, PostgreSQL and a model-presence
+check are started. The backend uses `http://host.docker.internal:11434`. Missing host models fail
+startup rather than being downloaded or updated automatically. Docker Desktop must be able to reach
+the host Ollama port; test that before changing its bind address. If access requires `OLLAMA_HOST`,
+follow the [Ollama configuration guide](https://docs.ollama.com/faq#how-do-i-configure-ollama-server)
+and restrict access to your trusted machine/network: Ollama has no API authentication by default.
+Use `ollama ps` during generation to check GPU use.
+
+To retain native mode for ordinary `docker compose` commands on macOS, add this to your local `.env`:
+
+```dotenv
+COMPOSE_FILE=docker-compose.yml:docker-compose.native.yml
+```
+
+PowerShell on Windows uses `;` instead of `:` for `COMPOSE_FILE`. Remove that setting to return to
+the portable Docker mode. An already-running Docker Ollama can be stopped with `docker compose stop ollama`;
+its model volume is retained. Keep the same embedding model digest when switching runtimes, and compare
+vectors before reusing an existing index; changing embedding models requires re-indexing. Neither launcher
+clears stored documents. The native override uses Compose's [`!reset` merge tag](https://docs.docker.com/reference/compose-file/merge/).
+
 ### Try the workflow
 
 1. Open the workspace and choose **Try the sample document**, or upload your own PDF/TXT/Markdown file.

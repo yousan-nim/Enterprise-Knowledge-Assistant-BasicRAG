@@ -28,6 +28,10 @@ try {
     & $launcher
     if ([System.IO.File]::ReadAllText($envFile) -ne $content) { throw 'Existing .env was overwritten.' }
 
+    & $launcher -NativeOllama
+    if ($global:DockerTestCalls -notcontains 'compose -f docker-compose.yml -f docker-compose.native.yml up -d --build --wait --wait-timeout 1800 frontend') { throw 'Native Ollama override was not selected.' }
+    if ([System.IO.File]::ReadAllText($envFile) -ne $content) { throw 'Native mode overwrote .env.' }
+
     Remove-Item -LiteralPath $envFile -Force
     foreach ($failedCommand in @('info', 'compose config --quiet', 'compose up -d --build --wait --wait-timeout 1800 frontend')) {
         $global:DockerTestFail = $failedCommand

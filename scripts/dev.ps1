@@ -1,7 +1,12 @@
+param([switch]$NativeOllama)
+
 $ErrorActionPreference = 'Stop'
 
 function Invoke-Docker {
     param([string[]]$DockerArguments)
+    if ($NativeOllama -and $DockerArguments[0] -eq 'compose') {
+        $DockerArguments = @('compose', '-f', 'docker-compose.yml', '-f', 'docker-compose.native.yml') + $DockerArguments[1..($DockerArguments.Length - 1)]
+    }
     & docker @DockerArguments
     if ($LASTEXITCODE -ne 0) {
         throw "Docker command failed: docker $($DockerArguments -join ' ') (exit $LASTEXITCODE)"

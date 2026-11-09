@@ -19,8 +19,8 @@ class DevScriptTests(unittest.TestCase):
         fake.chmod(0o755)
         self.env = {**os.environ, 'PATH': str(self.root / 'bin') + os.pathsep + os.environ['PATH'], 'DOCKER_TEST_LOG': str(self.root / 'calls')}
 
-    def run_script(self):
-        return subprocess.run(['sh', str(self.root / 'scripts/dev.sh')], cwd='/', env=self.env, capture_output=True, text=True)
+    def run_script(self, *args):
+        return subprocess.run(['sh', str(self.root / 'scripts/dev.sh'), *args], cwd='/', env=self.env, capture_output=True, text=True)
 
     def test_generates_private_env_and_starts_stack(self):
         result = self.run_script()
@@ -42,3 +42,16 @@ class DevScriptTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('Start Docker Desktop', result.stderr)
         self.assertFalse((self.root / '.env').exists())
+
+    def test_native_mode_selects_override_and_preserves_env(self):
+        (self.root / '.env').write_text('POSTGRES_PASSWORD=existing\n')
+        result = self.run_script('--native')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        calls = (self.root / 'calls').read_text()
+        self.assertIn('compose -f docker-compose.yml -f docker-compose.native.yml up', calls)
+        self.assertEqual((self.root / '.env').read_text(), 'POSTGRES_PASSWORD=existing\n')
+
+    def test_unknown_mode_does_not_start_stack(self):
+        result = self.run_script('--unknown')
+        self.assertEqual(result.returncode, 2)
+        self.assertFalse((self.root / 'calls').exists())
