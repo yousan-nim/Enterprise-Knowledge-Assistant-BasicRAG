@@ -28,7 +28,7 @@ class DevScriptTests(unittest.TestCase):
         settings = dict(line.split('=', 1) for line in (self.root / '.env').read_text().splitlines())
         self.assertEqual(len(settings['POSTGRES_PASSWORD']), 48)
         self.assertEqual((self.root / '.env').stat().st_mode & 0o777, 0o600)
-        self.assertIn('compose up -d --build --wait --wait-timeout 1800 backend', (self.root / 'calls').read_text())
+        self.assertIn('compose up -d --build --wait --wait-timeout 1800 frontend', (self.root / 'calls').read_text())
         self.assertNotIn(settings['POSTGRES_PASSWORD'], result.stdout)
 
     def test_preserves_existing_env(self):

@@ -29,7 +29,7 @@ try {
             $generator.Dispose()
         }
         $password = [BitConverter]::ToString($randomBytes).Replace('-', '').ToLowerInvariant()
-        $content = "POSTGRES_DB=knowledge`nPOSTGRES_USER=rag`nPOSTGRES_PASSWORD=$password`nPOSTGRES_PORT=5433`nAPI_PORT=8080`n"
+        $content = "POSTGRES_DB=knowledge`nPOSTGRES_USER=rag`nPOSTGRES_PASSWORD=$password`nPOSTGRES_PORT=5433`nAPI_PORT=8080`nWEB_PORT=3000`n"
         $envPath = Join-Path (Get-Location).Path '.env'
         # CreateNew refuses to overwrite a file created by another process.
         $stream = [System.IO.File]::Open($envPath, [System.IO.FileMode]::CreateNew)
@@ -45,9 +45,9 @@ try {
 
     Write-Host 'Building API and preparing local models. First startup downloads several GB.'
     Invoke-Docker -DockerArguments @('compose', 'config', '--quiet')
-    Invoke-Docker -DockerArguments @('compose', 'up', '-d', '--build', '--wait', '--wait-timeout', '1800', 'backend')
+    Invoke-Docker -DockerArguments @('compose', 'up', '-d', '--build', '--wait', '--wait-timeout', '1800', 'frontend')
     Invoke-Docker -DockerArguments @('compose', 'ps')
-    Write-Host "Ready. Swagger is on the backend's published port (default http://127.0.0.1:8080/docs)."
+    Write-Host "Ready. Open the workspace at http://127.0.0.1:3000 (or your WEB_PORT). API docs: http://127.0.0.1:8080/docs."
     Write-Host 'Stop: docker compose down (documents and models are retained).'
 }
 finally {
