@@ -25,12 +25,12 @@ MAX_UPLOAD_BYTES = 1024 * 1024
     response_model=DocumentResponse,
     tags=["Documents"],
     summary="Upload and index a TXT, Markdown or PDF document",
-    description="Send multipart/form-data with a file field. Accepts UTF-8 TXT/Markdown (including BOM) and text-based PDF, at most 1 MiB, 50 PDF pages and 50,000 extracted characters. Rejects empty text, null characters, damaged and encrypted PDFs. Scanned PDFs require OCR, which is not supported. Completes embeddings before atomically replacing the previous document in PostgreSQL. The uploaded binary is not retained.",
+    description="Send multipart/form-data with a file field. Accepts UTF-8 TXT/Markdown (including BOM) and PDF, at most 1 MiB, 50 PDF pages and 50,000 extracted characters. Rejects empty text, null characters, damaged and encrypted PDFs. Pages without extractable text use Thai/English OCR (at most 5 pages, including blank pages). A 120-second budget is checked before each OCR page; an in-flight page can continue for up to 30 seconds rendering plus 30 seconds recognition. OCR failure rejects the entire upload. Completes embeddings before atomically replacing the previous document in PostgreSQL. The uploaded binary is not retained.",
     responses=DOCUMENT_ERRORS)
 async def prepare_document(
     file: UploadFile = File(
         ...,
-        description="A .txt, .md or text-based .pdf file.",
+        description="A .txt, .md or .pdf file (with OCR fallback for scanned pages).",
     ),
 ):
     try:

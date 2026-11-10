@@ -1,0 +1,12 @@
+# Docker Desktop + an already running host Ollama (Mac Metal / Windows GPU).
+# No model downloads or changes to the host's installed model versions.
+services:
+  models:
+    environment:
+      OLLAMA_HOST: http://host.docker.internal:11434
+    depends_on: !reset {}
+    command: ["ollama show embeddinggemma && ollama show qwen2.5:3b"]
+
+  backend:
+    environment:
+      OLLAMA_BASE_URL: http://host.docker.internal:11434

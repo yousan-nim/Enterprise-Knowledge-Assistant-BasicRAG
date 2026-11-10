@@ -73,3 +73,36 @@ class PostgresApiTests(unittest.IsolatedAsyncioTestCase):
                     response = await client.post('/api/v1/questions', json={'question': 'Anything?'})
                 self.assertEqual(response.status_code, 503)
                 self.assertNotIn('private', response.text)
+
+    @unittest.skipUnless(os.getenv('RUN_OCR_TESTS') == '1', 'Requires real OCR tools')
+    async def test_scanned_upload_uses_real_ocr_and_pgvector(self):
+        from test_ocr_integration import scanned_pdf
+        vector = [1.] + [0.] * 767
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url='http://test') as client:
+            with patch('app.services.ingestion.embed_texts', new_callable=AsyncMock, return_value=[vector]):
+                response = await client.post('/api/v1/documents', files={'file': ('scanned.pdf', scanned_pdf('TRAVEL LIMIT 500'), 'application/pdf')})
+            self.assertEqual(response.status_code, 201, response.text)
+            stored = postgres.search_chunks(vector)
+            self.assertEqual(stored[0]['extraction_method'], 'ocr')
+            self.assertEqual(stored[0]['page'], 1)
+            self.assertIn('500', stored[0]['text'])
+            with patch('app.routes.questions.embed_texts', new_callable=AsyncMock, return_value=[vector]):
+                with patch('app.routes.questions.answer_with_sources', new_callable=AsyncMock, return_value=GroundedAnswer(answer='500', citation_ids=['chunk-1'], found=True)):
+                    response = await client.post('/api/v1/questions', json={'question': 'What is the limit?'})
+            self.assertEqual(response.status_code, 200, response.text)
+            self.assertEqual(response.json()['sources'][0]['extraction_method'], 'ocr')
+            self.assertEqual(response.json()['sources'][0]['page'], 1)
+
+    @unittest.skipUnless(os.getenv('RUN_OCR_TESTS') == '1', 'Requires real OCR tools')
+    async def test_thai_scan_keeps_ocr_metadata_in_postgres(self):
+        from pathlib import Path
+        data = (Path(__file__).resolve().parents[2] / 'samples/ocr/thai-policy-scan.pdf').read_bytes()
+        vector = [1.] + [0.] * 767
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url='http://test') as client:
+            with patch('app.services.ingestion.embed_texts', new_callable=AsyncMock, side_effect=lambda texts: [vector for _ in texts]):
+                response = await client.post('/api/v1/documents', files={'file': ('thai-policy-scan.pdf', data, 'application/pdf')})
+        self.assertEqual(response.status_code, 201, response.text)
+        results = postgres.search_chunks(vector)
+        self.assertTrue(results)
+        self.assertTrue(all(item['page'] == 1 and item['extraction_method'] == 'ocr' for item in results))
+        self.assertIn('500', ''.join(item['text'] for item in results))

@@ -16,3 +16,8 @@ out/
 backend/data/*
 !backend/data/.gitkeep
 .DS_Store
+
+# Browser test/build artifacts
+frontend/test-results/
+frontend/playwright-report/
+*.tsbuildinfo
