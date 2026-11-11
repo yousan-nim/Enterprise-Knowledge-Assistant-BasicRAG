@@ -160,6 +160,31 @@ SQLite storage and Python cosine search remain as learning baselines and test he
 PostgreSQL. SQLite documents are not automatically migrated. PostgreSQL initialization scripts run only
 on an empty volume; see [database setup](infra/postgres/README.md) for an existing volume.
 
+## RAG evaluation
+
+The [handbook evaluation](evaluation/README.md) runs four fictional Thai questions against an English
+handbook: direct answers, multiple evidence passages, an unanswerable question, and paraphrasing.
+It reuses the app's RAG functions with isolated **in-memory cosine retrieval**; it does not modify
+indexed documents or test the live API, pgvector, or OCR.
+
+With Python 3.11, backend dependencies installed and host Ollama running:
+
+```bash
+backend/.venv/bin/python evaluation/run.py
+backend/.venv/bin/python evaluation/run.py --top-k 5
+```
+
+Windows: use `backend\.venv\Scripts\python.exe`. Models: `embeddinggemma` and `qwen2.5:3b`.
+`OLLAMA_BASE_URL` defaults to `http://127.0.0.1:11434`. Reports are written to timestamped JSON files
+in `reports/`, preserving retrieved passages, citations, stage timings, errors and manual-review fields.
+
+The [initial baseline report](reports/handbook-evaluation-20261111T211332409588Z.json) completed
+4 cases with no execution errors, valid output schemas/IDs and matching answerability decisions in
+4/4 cases. Gold quote coverage was 1.0 for the 3 answerable cases. **Human answer/citation review is
+still pending**; these checks do not establish 100% answer accuracy or general retrieval quality.
+Measured latency is specific to that run and hardware. See the evaluation guide for metric definitions
+and limitations; vary one of chunk size, overlap or top-k at a time when comparing experiments.
+
 ## Develop and test without containers for the API
 
 Requires Python 3.11 and host Ollama with `embeddinggemma` and `qwen2.5:3b` downloaded.

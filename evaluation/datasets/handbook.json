@@ -1,0 +1,72 @@
+{
+  "dataset_id": "handbook-v1",
+  "document_path": "evaluation/documents/handbook.md",
+  "cases": [
+    {
+      "id": "q001",
+      "category": "direct",
+      "question": "ค่าเดินทางไปพบลูกค้าเบิกได้สูงสุดเท่าไร?",
+      "answerable": true,
+      "reference_answer": "เบิกได้ตามจริง สูงสุด 500 บาทต่อวัน และต้องมีใบเสร็จ",
+      "required_facts": [
+        "เบิกตามค่าใช้จ่ายจริง",
+        "สูงสุด 500 บาทต่อวัน",
+        "ต้องมีใบเสร็จ"
+      ],
+      "expected_evidence": [
+        {
+          "page": 1,
+          "text": "Client-visit travel expenses are reimbursed at actual cost,\nup to THB 500 per day. Receipts are required."
+        }
+      ]
+    },
+    {
+      "id": "q002",
+      "category": "multi_evidence",
+      "question": "ทำงานวันไหน เวลาใด และทำงานจากบ้านได้กี่วัน?",
+      "answerable": true,
+      "reference_answer": "ทำงานจันทร์ถึงศุกร์ เวลา 09:00–18:00 และทำงานจากบ้านได้สูงสุดสองวันต่อสัปดาห์ โดยต้องได้รับอนุมัติจากผู้จัดการ",
+      "required_facts": [
+        "จันทร์ถึงศุกร์",
+        "09:00–18:00",
+        "ทำงานจากบ้านสูงสุดสองวันต่อสัปดาห์",
+        "ต้องได้รับอนุมัติจากผู้จัดการ"
+      ],
+      "expected_evidence": [
+        {
+          "page": 1,
+          "text": "Employees work Monday–Friday, from 09:00 to 18:00."
+        },
+        {
+          "page": 1,
+          "text": "Employees may work remotely up to two days per week.\nManager approval is required."
+        }
+      ]
+    },
+    {
+      "id": "q003",
+      "category": "unanswerable",
+      "question": "บริษัทจ่ายโบนัสกี่เดือน?",
+      "answerable": false,
+      "reference_answer": "ไม่พบข้อมูลในเอกสาร",
+      "required_facts": [],
+      "expected_evidence": []
+    },
+    {
+      "id": "q004",
+      "category": "paraphrase",
+      "question": "ถ้าจะหยุดพักร้อน ต้องแจ้งล่วงหน้านานแค่ไหน?",
+      "answerable": true,
+      "reference_answer": "ต้องส่งคำขอลาล่วงหน้าอย่างน้อยเจ็ดวัน",
+      "required_facts": [
+        "ส่งคำขอลาล่วงหน้าอย่างน้อยเจ็ดวัน"
+      ],
+      "expected_evidence": [
+        {
+          "page": 1,
+          "text": "Leave requests must be submitted at least seven days in advance."
+        }
+      ]
+    }
+  ]
+}
