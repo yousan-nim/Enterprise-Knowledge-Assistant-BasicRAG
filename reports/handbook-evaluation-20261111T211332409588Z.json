@@ -1,0 +1,318 @@
+{
+  "created_at": "2026-11-11T21:13:32.409588+00:00",
+  "dataset_id": "handbook-v1",
+  "status": "completed",
+  "scope": "in-memory retrieval; no API or pgvector evaluation",
+  "config": {
+    "chunk_size": 250,
+    "overlap": 50,
+    "top_k": 3,
+    "embedding_model": "embeddinggemma",
+    "chat_model": "qwen2.5:3b",
+    "chunk_count": 3,
+    "embedding_dimensions": 768
+  },
+  "fingerprints": {
+    "dataset": "52fb38595aee2c91d3d4f307fb0c7f605eb8c841de8ef368cadc574e9bf9563d",
+    "document": "af6012c76f066ca7d852b0cf1b8daac4ddfee78f47acf17e064250c4ef6b108d"
+  },
+  "installed_models": [
+    {
+      "name": "embeddinggemma:latest",
+      "digest": "85462619ee721b466c5927d109d4cb765861907d5417b9109caebc4e614679f1"
+    },
+    {
+      "name": "qwen2.5:3b",
+      "digest": "357c53fb659c5076de1d65ccb0b397446227b71a42be9d1603d46168015c9e4b"
+    },
+    {
+      "name": "gemma3:1b",
+      "digest": "8648f39daa8fbf5b18c7b4e6a8fb4990c692751d49917417b8842ca5758e7ffc"
+    }
+  ],
+  "results": [
+    {
+      "id": "q001",
+      "category": "direct",
+      "question": "ค่าเดินทางไปพบลูกค้าเบิกได้สูงสุดเท่าไร?",
+      "expected_answerable": true,
+      "reference_answer": "เบิกได้ตามจริง สูงสุด 500 บาทต่อวัน และต้องมีใบเสร็จ",
+      "required_facts": [
+        "เบิกตามค่าใช้จ่ายจริง",
+        "สูงสุด 500 บาทต่อวัน",
+        "ต้องมีใบเสร็จ"
+      ],
+      "expected_evidence": [
+        {
+          "page": 1,
+          "text": "Client-visit travel expenses are reimbursed at actual cost,\nup to THB 500 per day. Receipts are required."
+        }
+      ],
+      "retrieved": [
+        {
+          "id": "chunk-2",
+          "text": " approval is required.\n\n## Travel expenses\nClient-visit travel expenses are reimbursed at actual cost,\nup to THB 500 per day. Receipts are required.\n\n## Annual leave\nEmployees receive 12 days of annual leave per year.\nLeave requests must be submitted",
+          "source": "handbook.md",
+          "page": 1,
+          "extraction_method": "direct",
+          "score": 0.45968233352330345
+        },
+        {
+          "id": "chunk-1",
+          "text": "# Employee Handbook\nFictional data for RAG evaluation.\n\n## Working hours\nEmployees work Monday–Friday, from 09:00 to 18:00.\n\n## Remote work\nEmployees may work remotely up to two days per week.\nManager approval is required.\n\n## Travel expenses\nClient-",
+          "source": "handbook.md",
+          "page": 1,
+          "extraction_method": "direct",
+          "score": 0.296647371427927
+        },
+        {
+          "id": "chunk-3",
+          "text": "l leave per year.\nLeave requests must be submitted at least seven days in advance.",
+          "source": "handbook.md",
+          "page": 1,
+          "extraction_method": "direct",
+          "score": 0.25907698162625786
+        }
+      ],
+      "output": {
+        "answer": "ค่าเดินทางไปพบลูกค้าเบิกได้สูงสุดเท่าไหร่? ตามข้อมูลจาก Handbooks ระบุว่า ค่าเดินทางไปพบลูกค้าจะได้รับคืนตามจริง ไม่เกิน THB 500 ต่อวัน",
+        "citation_ids": [
+          "chunk-2"
+        ],
+        "found": true
+      },
+      "error": null,
+      "metrics": {
+        "schema_and_ids_valid": true,
+        "found_matches_expected": true,
+        "gold_quote_coverage": 1.0
+      },
+      "timing_seconds": {
+        "query_embedding": 0.037,
+        "retrieval": 0.0011,
+        "generation_and_validation": 25.0731,
+        "total": 25.114
+      },
+      "manual_review": {
+        "answer_correct": null,
+        "required_facts_complete": null,
+        "citations_support_claims": null,
+        "language_correct": null,
+        "notes": ""
+      }
+    },
+    {
+      "id": "q002",
+      "category": "multi_evidence",
+      "question": "ทำงานวันไหน เวลาใด และทำงานจากบ้านได้กี่วัน?",
+      "expected_answerable": true,
+      "reference_answer": "ทำงานจันทร์ถึงศุกร์ เวลา 09:00–18:00 และทำงานจากบ้านได้สูงสุดสองวันต่อสัปดาห์ โดยต้องได้รับอนุมัติจากผู้จัดการ",
+      "required_facts": [
+        "จันทร์ถึงศุกร์",
+        "09:00–18:00",
+        "ทำงานจากบ้านสูงสุดสองวันต่อสัปดาห์",
+        "ต้องได้รับอนุมัติจากผู้จัดการ"
+      ],
+      "expected_evidence": [
+        {
+          "page": 1,
+          "text": "Employees work Monday–Friday, from 09:00 to 18:00."
+        },
+        {
+          "page": 1,
+          "text": "Employees may work remotely up to two days per week.\nManager approval is required."
+        }
+      ],
+      "retrieved": [
+        {
+          "id": "chunk-1",
+          "text": "# Employee Handbook\nFictional data for RAG evaluation.\n\n## Working hours\nEmployees work Monday–Friday, from 09:00 to 18:00.\n\n## Remote work\nEmployees may work remotely up to two days per week.\nManager approval is required.\n\n## Travel expenses\nClient-",
+          "source": "handbook.md",
+          "page": 1,
+          "extraction_method": "direct",
+          "score": 0.45428878199990175
+        },
+        {
+          "id": "chunk-2",
+          "text": " approval is required.\n\n## Travel expenses\nClient-visit travel expenses are reimbursed at actual cost,\nup to THB 500 per day. Receipts are required.\n\n## Annual leave\nEmployees receive 12 days of annual leave per year.\nLeave requests must be submitted",
+          "source": "handbook.md",
+          "page": 1,
+          "extraction_method": "direct",
+          "score": 0.41350164795483446
+        },
+        {
+          "id": "chunk-3",
+          "text": "l leave per year.\nLeave requests must be submitted at least seven days in advance.",
+          "source": "handbook.md",
+          "page": 1,
+          "extraction_method": "direct",
+          "score": 0.39560044100330266
+        }
+      ],
+      "output": {
+        "answer": "Employees work Monday to Friday, from 09:00 to 18:00. Employees may work remotely up to two days per week with manager approval.",
+        "citation_ids": [
+          "chunk-1"
+        ],
+        "found": true
+      },
+      "error": null,
+      "metrics": {
+        "schema_and_ids_valid": true,
+        "found_matches_expected": true,
+        "gold_quote_coverage": 1.0
+      },
+      "timing_seconds": {
+        "query_embedding": 2.6626,
+        "retrieval": 0.0239,
+        "generation_and_validation": 7.5616,
+        "total": 10.2522
+      },
+      "manual_review": {
+        "answer_correct": null,
+        "required_facts_complete": null,
+        "citations_support_claims": null,
+        "language_correct": null,
+        "notes": ""
+      }
+    },
+    {
+      "id": "q003",
+      "category": "unanswerable",
+      "question": "บริษัทจ่ายโบนัสกี่เดือน?",
+      "expected_answerable": false,
+      "reference_answer": "ไม่พบข้อมูลในเอกสาร",
+      "required_facts": [],
+      "expected_evidence": [],
+      "retrieved": [
+        {
+          "id": "chunk-2",
+          "text": " approval is required.\n\n## Travel expenses\nClient-visit travel expenses are reimbursed at actual cost,\nup to THB 500 per day. Receipts are required.\n\n## Annual leave\nEmployees receive 12 days of annual leave per year.\nLeave requests must be submitted",
+          "source": "handbook.md",
+          "page": 1,
+          "extraction_method": "direct",
+          "score": 0.3905355776614471
+        },
+        {
+          "id": "chunk-3",
+          "text": "l leave per year.\nLeave requests must be submitted at least seven days in advance.",
+          "source": "handbook.md",
+          "page": 1,
+          "extraction_method": "direct",
+          "score": 0.37826899578947354
+        },
+        {
+          "id": "chunk-1",
+          "text": "# Employee Handbook\nFictional data for RAG evaluation.\n\n## Working hours\nEmployees work Monday–Friday, from 09:00 to 18:00.\n\n## Remote work\nEmployees may work remotely up to two days per week.\nManager approval is required.\n\n## Travel expenses\nClient-",
+          "source": "handbook.md",
+          "page": 1,
+          "extraction_method": "direct",
+          "score": 0.3492254907753968
+        }
+      ],
+      "output": {
+        "answer": "ไม่พบข้อมูลในเอกสาร",
+        "citation_ids": [],
+        "found": false
+      },
+      "error": null,
+      "metrics": {
+        "schema_and_ids_valid": true,
+        "found_matches_expected": true,
+        "gold_quote_coverage": null
+      },
+      "timing_seconds": {
+        "query_embedding": 0.1517,
+        "retrieval": 0.0011,
+        "generation_and_validation": 2.2087,
+        "total": 2.363
+      },
+      "manual_review": {
+        "answer_correct": null,
+        "required_facts_complete": null,
+        "citations_support_claims": null,
+        "language_correct": null,
+        "notes": ""
+      }
+    },
+    {
+      "id": "q004",
+      "category": "paraphrase",
+      "question": "ถ้าจะหยุดพักร้อน ต้องแจ้งล่วงหน้านานแค่ไหน?",
+      "expected_answerable": true,
+      "reference_answer": "ต้องส่งคำขอลาล่วงหน้าอย่างน้อยเจ็ดวัน",
+      "required_facts": [
+        "ส่งคำขอลาล่วงหน้าอย่างน้อยเจ็ดวัน"
+      ],
+      "expected_evidence": [
+        {
+          "page": 1,
+          "text": "Leave requests must be submitted at least seven days in advance."
+        }
+      ],
+      "retrieved": [
+        {
+          "id": "chunk-3",
+          "text": "l leave per year.\nLeave requests must be submitted at least seven days in advance.",
+          "source": "handbook.md",
+          "page": 1,
+          "extraction_method": "direct",
+          "score": 0.5532268482757986
+        },
+        {
+          "id": "chunk-2",
+          "text": " approval is required.\n\n## Travel expenses\nClient-visit travel expenses are reimbursed at actual cost,\nup to THB 500 per day. Receipts are required.\n\n## Annual leave\nEmployees receive 12 days of annual leave per year.\nLeave requests must be submitted",
+          "source": "handbook.md",
+          "page": 1,
+          "extraction_method": "direct",
+          "score": 0.45122034110693215
+        },
+        {
+          "id": "chunk-1",
+          "text": "# Employee Handbook\nFictional data for RAG evaluation.\n\n## Working hours\nEmployees work Monday–Friday, from 09:00 to 18:00.\n\n## Remote work\nEmployees may work remotely up to two days per week.\nManager approval is required.\n\n## Travel expenses\nClient-",
+          "source": "handbook.md",
+          "page": 1,
+          "extraction_method": "direct",
+          "score": 0.37819119835301335
+        }
+      ],
+      "output": {
+        "answer": "Leave requests must be submitted at least seven days in advance.",
+        "citation_ids": [
+          "chunk-3"
+        ],
+        "found": true
+      },
+      "error": null,
+      "metrics": {
+        "schema_and_ids_valid": true,
+        "found_matches_expected": true,
+        "gold_quote_coverage": 1.0
+      },
+      "timing_seconds": {
+        "query_embedding": 0.2164,
+        "retrieval": 0.0011,
+        "generation_and_validation": 4.3292,
+        "total": 4.5478
+      },
+      "manual_review": {
+        "answer_correct": null,
+        "required_facts_complete": null,
+        "citations_support_claims": null,
+        "language_correct": null,
+        "notes": ""
+      }
+    }
+  ],
+  "summary": {
+    "completed_cases": 4,
+    "errors": 0,
+    "schema_and_ids_valid": 4,
+    "found_matches_expected": 4,
+    "retrieval_scored_cases": 3,
+    "mean_gold_quote_coverage": 1.0,
+    "mean_total_seconds": 10.5693,
+    "human_review_required": true
+  },
+  "ingestion_seconds": 3.4042
+}
